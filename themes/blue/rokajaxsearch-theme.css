@@ -1,0 +1,86 @@
+
+#roksearch_search_str {
+    /* background: #ffffff url("search-icon.png") no-repeat scroll 98% 50%; */
+    color: #000000;
+    margin: 4px 0 0;
+    padding: 0 10px;
+    vertical-align: middle;
+    width: 428px;
+}
+#roksearch_search_str.loading {
+    background-color: #eff8fa;
+    border: 1px solid #ff7800;
+}
+#roksearch_results {
+    background: #eff8fa none repeat scroll 0 0;
+    border: 1px solid #ff7800;
+}
+#roksearch_results a#roksearch_link {
+    background: rgba(0, 0, 0, 0) url("close.png") no-repeat scroll 0 0;
+}
+#roksearch_results h3 {
+    color: #444;
+}
+#roksearch_results span {
+    color: #888;
+}
+#roksearch_results .roksearch_header, #roksearch_results .roksearch_row_btm {
+    background: #fff none repeat scroll 0 0;
+    border-bottom: 1px solid #ff7800;
+    color: #666;
+}
+#roksearch_results .roksearch_row_btm span {
+    color: #999;
+}
+#roksearch_results span.small {
+    color: #666;
+}
+#roksearch_results span.highlight {
+    background: #999 none repeat scroll 0 0;
+    color: #fff;
+}
+#roksearch_results a:hover {
+    color: #0b3768;
+}
+#roksearch_results .roksearch_odd {
+    background: #eff8fa none repeat scroll 0 0;
+    border-bottom: 1px solid #ff7800;
+}
+#roksearch_results .roksearch_even {
+    background: #e9f0f2 none repeat scroll 0 0;
+    border-bottom: 1px solid #ff7800;
+}
+#roksearch_results .roksearch_odd-hover, #roksearch_results .roksearch_even-hover {
+    background-color: #fff;
+}
+#roksearch_results .roksearch_odd-hover h3, #roksearch_results .roksearch_even-hover h3 {
+    background: rgba(0, 0, 0, 0) url("right-arrow.png") no-repeat scroll 0 4px;
+}
+.results ol.list li p {
+    color: #666;
+}
+#roksearch_results .arrow-left {
+    background: #e9e9e9 url("left-arrow.png") no-repeat scroll 50% 50%;
+    border: 1px solid #d9d9d9;
+}
+#roksearch_results .arrow-left-disabled {
+    background: #fefefe none repeat scroll 0 0;
+    border: 1px solid #e9e9e9;
+}
+#roksearch_results .arrow-right {
+    background: #e9e9e9 url("right-arrow.png") no-repeat scroll 50% 50%;
+    border: 1px solid #d9d9d9;
+}
+#roksearch_results .arrow-right-disabled {
+    background: #fefefe none repeat scroll 0 0;
+    border: 1px solid #e9e9e9;
+}
+form.search_result .inputbox {
+    border: 1px solid #ff7800;
+}
+fieldset.phrase, fieldset.word, fieldset.only {
+    border-bottom: 1px solid #ff7800;
+}
+#roksearch_results .rokajaxsearch-overlay {
+    background-color: #eff8fa;
+}
