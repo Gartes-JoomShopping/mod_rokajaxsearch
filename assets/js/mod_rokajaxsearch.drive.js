@@ -7,14 +7,65 @@
 
 })();
 
+
+
 window.modRokajaxsearchDrive = function () {
     var $ = jQuery ;
     var self = this ;
     this._Setting = {
          selectorInput : '#roksearch_search_str'
     };
+
+    this.speechGo = false ;
+    /**
+     * Поиск количества результатов поиска
+     * @param e
+     */
+    this.parseResultCount = function (e) {
+        var $html = $(e.detail) ;
+        var count = $html.find('.badge.badge-info').text();
+        if ( typeof count === 'undefined' ) count = 0 ;
+        var a = wgnz11.declOfNum( count , ['найден ', 'найдено ', 'найдено '] );
+        var b = wgnz11.declOfNum( count , ['товар ', 'товара ', 'товаров '] );
+        var text = a + wgnz11.getLettersSumm(count) + b  ;
+
+        if (self.speechGo) return ;
+
+        utter = new window.SpeechSynthesisUtterance(text);
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+        self.speechGo = true ;
+        setTimeout(function () {
+            self.speechGo = false ;
+        }, 5000)
+        console.log( text  )
+    };
+
+
+
+
     this.Init = function () {
         $('#rokajaxsearch-icon').on('click' , self.onSearchIconClick );
+
+        // Слушаем событие
+        document.addEventListener('onKeyUpSuccess', self.parseResultCount, false);
+
+        var input = document.getElementById('roksearch_search_str');
+        var $b = $('body') ;
+        var $overlay = $('<div />' , {
+            id : 'roksearch_overlay',
+        });
+        input.onblur = function () {
+           $b.find('#roksearch_overlay').remove();
+           $b.removeClass('roksearch-active')
+        };
+        input.onfocus = function() {
+            $b.append($overlay);
+            $b.addClass('roksearch-active') ;
+        };
+
+
+
 
         if ('webkitSpeechRecognition' in window) {
             self.RecognitionInit();
@@ -38,9 +89,8 @@ window.modRokajaxsearchDrive = function () {
      * @constructor
      */
     this.RecognitionInit  =function () {
-
-        var urlLib = '/libraries/GNZ11/assets/js/gnz11.js' ;
-
+        var siteUrl = Joomla.getOptions('siteUrlsiteUrl' , '' ) ;
+        var urlLib = siteUrl+'/libraries/GNZ11/assets/js/gnz11.js' ;
         self._loadJsFile( urlLib , self.speechRecognitionInit ) ;
     };
     /**
@@ -51,6 +101,9 @@ window.modRokajaxsearchDrive = function () {
         // Очитстить поле ввода при старте записи
         $(self._Setting.selectorInput).val('')
     };
+
+
+
     /**
      * Событие - окончание распознования речи
      */
@@ -58,6 +111,10 @@ window.modRokajaxsearchDrive = function () {
         $(self._Setting.selectorInput).trigger('keydown')
         $(self._Setting.selectorInput).trigger('keyup')
         var element = document.getElementById('roksearch_search_str');
+
+
+
+
 
         /**
          * Программная генерация событий DOM 2 Events

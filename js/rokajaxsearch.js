@@ -441,6 +441,11 @@ var RokAjaxSearch = new Class({
                                 b.addClass("loading");
                             }.bind(this),
                             onSuccess: function(r, s, p) {
+                                var event = new CustomEvent('onKeyUpSuccess', { 'detail': r });
+                                // Вызываем событие
+                                document.dispatchEvent(event);
+
+
                                 var n = new Element("div", {
                                     styles: {
                                         display: "none"
