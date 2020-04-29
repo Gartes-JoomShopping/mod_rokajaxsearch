@@ -9,6 +9,10 @@
 
 
 
+
+
+
+
 window.modRokajaxsearchDrive = function () {
     var $ = jQuery ;
     var self = this ;
@@ -31,9 +35,9 @@ window.modRokajaxsearchDrive = function () {
 
         if (self.speechGo) return ;
 
-        utter = new window.SpeechSynthesisUtterance(text);
+        /*utter = new window.SpeechSynthesisUtterance(text);
         window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utter);
+        window.speechSynthesis.speak(utter);*/
         self.speechGo = true ;
         setTimeout(function () {
             self.speechGo = false ;
