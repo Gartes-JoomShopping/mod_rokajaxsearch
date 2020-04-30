@@ -84,8 +84,8 @@ window.modRokajaxsearchDrive = function () {
      * @constructor
      */
     this.RecognitionInit  =function () {
-        var siteUrl = Joomla.getOptions('siteUrlsiteUrl' , '' ) ;
-        var urlLib = siteUrl+'/libraries/GNZ11/assets/js/gnz11.js' ;
+        // var siteUrl = Joomla.getOptions('siteUrlsiteUrl' , '' ) ;
+        var urlLib = window.CoreGnz11.SiteUrl+'libraries/GNZ11/assets/js/gnz11.js' ;
         if (window.CoreGnz11.Status === 'loading'){
             var I = setInterval(function () {
                 if ( typeof wgnz11 === 'object') {
