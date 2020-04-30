@@ -45,9 +45,6 @@ window.modRokajaxsearchDrive = function () {
         console.log( text  )
     };
 
-
-
-
     this.Init = function () {
         $('#rokajaxsearch-icon').on('click' , self.onSearchIconClick );
 
@@ -67,16 +64,10 @@ window.modRokajaxsearchDrive = function () {
             $b.append($overlay);
             $b.addClass('roksearch-active') ;
         };
-
-
-
-
         if ('webkitSpeechRecognition' in window) {
             self.RecognitionInit();
         }
-
     };
-
     /**
      * Событие нажатие на лупу
      * @param event
@@ -95,7 +86,17 @@ window.modRokajaxsearchDrive = function () {
     this.RecognitionInit  =function () {
         var siteUrl = Joomla.getOptions('siteUrlsiteUrl' , '' ) ;
         var urlLib = siteUrl+'/libraries/GNZ11/assets/js/gnz11.js' ;
-        self._loadJsFile( urlLib , self.speechRecognitionInit ) ;
+        if (window.CoreGnz11.Status === 'loading'){
+            var I = setInterval(function () {
+                if ( typeof wgnz11 === 'object') {
+                    clearInterval(I)
+                    self.speechRecognitionInit()
+                }
+            },1000 );
+        }
+        else{
+            self._loadJsFile( urlLib , self.speechRecognitionInit ) ;
+        }
     };
     /**
      * Событие - начало распознования речи
@@ -115,11 +116,6 @@ window.modRokajaxsearchDrive = function () {
         $(self._Setting.selectorInput).trigger('keydown')
         $(self._Setting.selectorInput).trigger('keyup')
         var element = document.getElementById('roksearch_search_str');
-
-
-
-
-
         /**
          * Программная генерация событий DOM 2 Events
          * @see https://habr.com/ru/post/114244/
@@ -137,8 +133,6 @@ window.modRokajaxsearchDrive = function () {
             o.keyCode = 8 ; // Указываем дополнительный параметр, так как initUIEvent его не принимает
         }
         element.dispatchEvent(o);
-
-
     };
 
     /**

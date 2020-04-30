@@ -8,7 +8,7 @@ Todo - Переделать под модуль
         <type>plugin</type>
         <folder>jshoppingadmin</folder>
         <element>exsel_products</element>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
         <client>0</client>
         <infourl title="Joomla!">https://www.joomla.org/announcements/release-news/5765-joomla-3-9-6-release.html</infourl>
         <downloads>
