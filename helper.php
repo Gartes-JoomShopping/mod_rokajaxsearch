@@ -26,9 +26,27 @@ class modRokajaxsearchHelper {
 	 */
 	public function __construct ()
 	{
+		$app = \Joomla\CMS\Factory::getApplication();
+		$app->input->get('modRokajaxsearchHelper' , 0 , 'INT');
+		if( $app->input->get('modRokajaxsearchHelper' , 0 , 'INT') )
+		{
+			return ;
+		}#END IF
 		JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
-		
-		
+		GNZ11\Core\Js::instance();
+
+
+		$doc = \Joomla\CMS\Factory::getDocument();
+		$uri = \Joomla\CMS\Uri\Uri::getInstance( $uri = 'SERVER' );
+
+
+		$root = $uri->root($pathonly = false, $path = null);
+		$doc->addScriptDeclaration('
+			window.CoreGnz11= window.CoreGnz11 || {};
+			window.CoreGnz11.SiteUrl = "'.$root .'";
+			console.log(window.CoreGnz11);
+		');
+		$app->input->set('modRokajaxsearchHelper' , 1 );
 		
 	}
 	

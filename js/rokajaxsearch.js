@@ -374,7 +374,7 @@ var RokAjaxSearch = new Class({
                                     type: "raw",
                                     option: "com_search",
                                     view: "search",
-                                    category_id: document.id("category_id").value,
+                                    // category_id: document.id("category_id").value,
                                     searchphrase: a.options.phrase,
                                     ordering: a.options.ordering,
                                     limit: a.options.limit,

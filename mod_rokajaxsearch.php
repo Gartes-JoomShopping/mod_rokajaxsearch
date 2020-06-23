@@ -13,6 +13,9 @@
  * Inspired on PixSearch Joomla! module by Henrik Hussfelt <henrik@pixpro.net>
  */
 
+
+
+
 defined('_JEXEC') or die('Restricted access');
 require_once( dirname( __FILE__ ) . '/helper.php' );
 $helper = new modRokajaxsearchHelper();
