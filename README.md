@@ -1,2 +1,2 @@
 # mod_rokajaxsearch
-Модуль поиска
+Модуль поиска товаров для компонента Joomshopping
