@@ -1,14 +1,3 @@
-/**
- * RokAjaxSearch Module
- *
- * @package		Joomla
- * @subpackage	RokAjaxSearch Module
- * @copyright Copyright (C) 2009 RocketTheme. All rights reserved.
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see RT-LICENSE.php
- * @author RocketTheme, LLC
- *
- */
-
 var RokAjaxSearch = new Class({
     version: "2.0 (mt 1.2)",
     Implements: [Options, Events],
@@ -332,8 +321,15 @@ var RokAjaxSearch = new Class({
                                 input.addClass('loading');
                             }.bind(this),
                             onSuccess: function(returns, b, c) {
+                                var event = new CustomEvent('onKeyUpSuccess', { 'detail': returns });
+                                // Вызываем событие
+                                document.dispatchEvent(event);
 
                                 var results = new Element('div', {'styles': {'display': 'none'}}).set('html', returns);
+
+                                this.categorys = results.getElement("div[id=joomshopping_categorys_search]");
+
+
                                 var tmp = document.id('rokajaxsearch_tmp');
 
                                 var wrapper = results.getElement('.contentpaneopen');
@@ -650,6 +646,9 @@ var RokAjaxSearch = new Class({
         });
 
         this.results.addClass('roksearch_results');
+
+
+
         var searchedRestuls = document.getElements('#rokajaxsearch_tmp ol.list li'),
             splitting, container, overlayfx;
         if (!searchedRestuls.length) searchedRestuls = document.getElements('#rokajaxsearch_tmp dl dt');
@@ -658,6 +657,13 @@ var RokAjaxSearch = new Class({
         if (searchedRestuls.length > 0) {
             container = new Element('div', {'class': 'container-wrapper'}).inject(wrapper4);
             var scroller = new Element('div', {'class': 'container-scroller'}).inject(container);
+
+            if (this.categorys) {
+                new Element("div", {
+                    "class": "joomshopping_categorys_search"
+                }).set("html", this.categorys.innerHTML).inject(scroller);
+            }
+
 
             searchedRestuls.each(function(res, i) {
                 var data = '';

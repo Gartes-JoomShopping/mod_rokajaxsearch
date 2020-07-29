@@ -52,7 +52,7 @@ class modRokajaxsearchHelper {
 	
 	function inizialize( $css_style, $offset, &$params){
 
-		$theme = $params->get('theme', 'blue');
+	    $theme = $params->get('theme', 'blue');
 
         JHtml::_('behavior.framework', true);
 		$doc = JFactory::getDocument();
@@ -77,7 +77,13 @@ class modRokajaxsearchHelper {
 			}
 
 		}
-		$doc->addScript(JURI::root(true) ."/modules/mod_rokajaxsearch/js/rokajaxsearch".self::_getJSVersion().".js");
+
+
+
+
+
+
+		$doc->addScript(JURI::root(true) ."/modules/mod_rokajaxsearch/js/rokajaxsearch.js?v_3.0.5");
 		
 		
 		$Link = JURI::base(true).'/modules/mod_rokajaxsearch/assets/js/mod_rokajaxsearch.drive.js' ;

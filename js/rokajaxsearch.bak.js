@@ -446,12 +446,11 @@ var RokAjaxSearch = new Class({
                                 document.dispatchEvent(event);
 
 
-                                var n = new Element("div", {
-                                    styles: {
-                                        display: "none"
-                                    }
-                                }).set("html", r);
+                                var n = new Element("div", { styles: { display: "none" } }).set("html", r);
+
 								this.categorys = n.getElement("div[id=joomshopping_categorys_search]");
+
+
                                 var o = document.id("rokajaxsearch_tmp");
                                 var e = n.getElement(".contentpaneopen");
                                 if (e) {
@@ -791,21 +790,12 @@ var RokAjaxSearch = new Class({
     },
     outputTableless: function() {
         var i = this;
-        var v = new Element("div", {
-            "class": "roksearch_wrapper1"
-        }).inject(this.results);
-        var u = new Element("div", {
-            "class": "roksearch_wrapper2"
-        }).inject(v);
-        var s = new Element("div", {
-            "class": "roksearch_wrapper3"
-        }).inject(u);
-        var q = new Element("div", {
-            "class": "roksearch_wrapper4"
-        }).inject(s);
-        var t = new Element("div", {
-            "class": "roksearch_header png"
-        }).set("html", this.options.results).inject(q);
+        var v = new Element("div", { "class": "roksearch_wrapper1" }).inject(this.results);
+        var u = new Element("div", { "class": "roksearch_wrapper2" }).inject(v);
+        var s = new Element("div", { "class": "roksearch_wrapper3" }).inject(u);
+        var q = new Element("div", { "class": "roksearch_wrapper4" }).inject(s);
+        var t = new Element("div", { "class": "roksearch_header png" }).set("html", this.options.results).inject(q);
+
         if (this.type != "local") {
             q.addClass("google-search").addClass("google-search-" + this.type);
             var d = '<span class="powered-by-google">(powered by <a href="http://google.com" target="_blank">Google</a>)</span>';
@@ -838,14 +828,14 @@ var RokAjaxSearch = new Class({
             });
         }
         this.results.addClass("roksearch_results");
+
+
+
         var n = document.getElements("#rokajaxsearch_tmp ol.list li"),
             c, g, e;
-        if (!n.length) {
-            n = document.getElements("#rokajaxsearch_tmp dl dt");
-        }
-        if (!n.length) {
-            n = document.getElements("#rokajaxsearch_tmp .item");
-        }
+        if (!n.length) { n = document.getElements("#rokajaxsearch_tmp dl dt"); }
+        if (!n.length) {  n = document.getElements("#rokajaxsearch_tmp .item"); }
+
         if (n.length > 0) {
             g = new Element("div", {
                 "class": "container-wrapper"
@@ -853,11 +843,16 @@ var RokAjaxSearch = new Class({
             var w = new Element("div", {
                 "class": "container-scroller"
             }).inject(g);
+
+
 			if (this.categorys) {
 				new Element("div", {
 					"class": "joomshopping_categorys_search"
 				}).set("html", this.categorys.innerHTML).inject(w);
 			}
+
+
+
             n.each(function(M, I) {
                 var H = "";
                 H = M.getChildren();
