@@ -2,14 +2,12 @@
 Todo - Переделать под модуль
 -->
 <updates>
-
     <update>
         <name>modRokAjaxSearchVoiceInput</name>
         <description><![CDATA[JoomShopping - RokAjaxSearch is an ajaxian searcher]]></description>
-        <type>plugin</type>
-        <folder>jshoppingadmin</folder>
-        <element>exsel_products</element>
-        <version>3.0.4</version>
+        <type>module</type>
+        <element>mod_rokajaxsearch</element>
+        <version>3.0.5</version>
         <client>0</client>
         <infourl title="Joomla!">https://www.joomla.org/announcements/release-news/5765-joomla-3-9-6-release.html</infourl>
         <downloads>
