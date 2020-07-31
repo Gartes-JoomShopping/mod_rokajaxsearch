@@ -84,7 +84,8 @@ class modRokajaxsearchHelper {
 
 
 		$doc->addScript(JURI::root(true) ."/modules/mod_rokajaxsearch/js/rokajaxsearch.js?v_3.0.6");
-		
+
+
 		
 		$Link = JURI::base(true).'/modules/mod_rokajaxsearch/assets/js/mod_rokajaxsearch.drive.js' ;
 		$this->_addScript( $Link );
