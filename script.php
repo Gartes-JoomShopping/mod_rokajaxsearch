@@ -67,12 +67,9 @@ class mod_rokajaxsearchInstallerScript
      */
     function preflight($type, $parent)
     {
-        // \Joomla\Registry\Format\Xml
-        echo '<p>Anything here happens before the installation/update/uninstallation of the module.</p>';
-        echo'<pre>';print_r( $parent->get('manifest')->config  );echo'</pre>'.__FILE__.' '.__LINE__;
-        echo'<pre>';print_r( $type );echo'</pre>'.__FILE__.' '.__LINE__;
-        echo'<pre>';print_r( $parent );echo'</pre>'.__FILE__.' '.__LINE__;
-        die(__FILE__ .' '. __LINE__ );
+        JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
+        \GNZ11\Extensions\ScriptFile::updateProcedure($type, $parent)
+
 
     }
 
@@ -93,10 +90,7 @@ class mod_rokajaxsearchInstallerScript
         echo '<p>Anything here happens after the installation/update/uninstallation of the module.</p>';
     }
 
-    private function delOldFiles(){
-        $Registry = new Joomla\Registry\Registry();
 
-    }
 
 
 }
