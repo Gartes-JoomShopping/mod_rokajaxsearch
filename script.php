@@ -67,7 +67,9 @@ class mod_rokajaxsearchInstallerScript
      */
     function preflight($type, $parent)
     {
+        // \Joomla\Registry\Format\Xml
         echo '<p>Anything here happens before the installation/update/uninstallation of the module.</p>';
+        echo'<pre>';print_r( $parent->get('manifest')->version  );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $type );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $parent );echo'</pre>'.__FILE__.' '.__LINE__;
         die(__FILE__ .' '. __LINE__ );
