@@ -3,7 +3,7 @@ Todo - Переделать под модуль
 -->
 <updates>
     <update>
-        <name>modRokAjaxSearchVoiceInput (Gartes)</name>
+        <name><![CDATA[modRokAjaxSearchVoiceInput (Gartes)]]></name>
         <description><![CDATA[JoomShopping - RokAjaxSearch is an ajaxian searcher]]></description>
         <type>module</type>
         <element>mod_rokajaxsearch</element>
