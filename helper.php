@@ -44,7 +44,6 @@ class modRokajaxsearchHelper {
 		$doc->addScriptDeclaration('
 			window.CoreGnz11= window.CoreGnz11 || {};
 			window.CoreGnz11.SiteUrl = "'.$root .'";
-			console.log(window.CoreGnz11);
 		');
 		$app->input->set('modRokajaxsearchHelper' , 1 );
 		
@@ -83,7 +82,10 @@ class modRokajaxsearchHelper {
 
 
 
-		$doc->addScript(JURI::root(true) ."/modules/mod_rokajaxsearch/js/rokajaxsearch.js?v_3.0.6");
+
+
+
+//		$doc->addScript(JURI::root(true) ."/modules/mod_rokajaxsearch/js/rokajaxsearch.js?v_3.0.6");
 
 
 		
@@ -283,5 +285,6 @@ button.search-form__microphone.speechRecognition:hover svg {
 	    echo  $dom->saveHTML() ;
 	   
     }
+
     
 }

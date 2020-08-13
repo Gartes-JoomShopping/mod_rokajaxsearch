@@ -20,8 +20,23 @@ defined('_JEXEC') or die('Restricted access');
 
 
 
+/*echo'<pre>';print_r( $params );echo'</pre>'.__FILE__.' '.__LINE__;
+die(__FILE__ .' '. __LINE__ );*/
+
+
+
 require_once( dirname( __FILE__ ) . '/helper.php' );
 $helper = new modRokajaxsearchHelper();
+
+$pathFileJson = '/modules/mod_rokajaxsearch/assets/files' ;
+$arrFiles = [
+    # Файлы которые удалить при обновлени
+    # Указываем путь от корня сайта
+    'DelFiles' => [
+        '/language/en-GB/en-GB.mod_rokajaxsearch.ini' ,
+    ],
+];
+\GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;
 
 $helper->inizialize($params->get('include_css'), $params->get('offset_search_result'), $params);
 

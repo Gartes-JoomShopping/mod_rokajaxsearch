@@ -270,22 +270,321 @@ var RokAjaxSearch = new Class({
         //console.log(this.google.cursor);*/
     },
 
+    _getUrlink : function ( self ){
+
+        var lnk = self.options.searchlink.split("?")[0];
+        lnk = lnk.replace(self.options.uribase, '');
+        lnk = (lnk) ? lnk : "index.php";
+
+        console.log( lnk )
+    },
+
     addEvents: function() {
         var self = this;
+        var $ = jQuery ;
+
+
         this.inputBox.addEvents({
+            paste: function(event) {
+                var input = this;
+                var uri = self.options.uribase ;
+                var text ;
+                var lnk ;
+
+
+
+                clearTimeout(self.timer);
+
+                setTimeout( function() {
+                    text = $(input).val();
+                    startPaste();
+                }, 100);
+
+                function startPaste (){
+                    lnk = self._getUrlink( self ) ;
+                    uri += lnk
+
+                    if (self.options.wordpress)
+                        uri = self.options.uribase + self.options.searchlink;
+
+                    console.log( text )
+                    // Если поле импута пустое
+                    if ( text === ''){
+                        var splitDivs = self.options.hidedivs.split(" ");
+
+                        self.results.empty()
+                            .removeClass('roksearch_results')
+                            .setStyle('visibility', 'hidden');
+
+                        console.log( splitDivs )
+                        if (splitDivs.length > 0 && splitDivs !== '') {
+                            splitDivs.each(function(div){
+                                document.id(div).setStyle('visibility', 'visible');
+                            });
+                        }
+
+                    } else
+                    {
+
+                        if (self.type === 'local') {
+                            var exact = text.split('"');
+                            if (exact.length >= 3) {
+                                self.options.phrase = 'exact';
+                            } else {
+                                self.options.phrase = self.searchphrase;
+                            }
+                            var request = new Request({
+                                url: uri,
+                                method: 'get',
+                                delay : 200,
+                                onRequest: function() {
+                                    input.addClass('loading');
+                                }.bind(this),
+                                onSuccess: function(returns, b, c) {
+                                    var event = new CustomEvent('onKeyUpSuccess', { 'detail': returns });
+                                    // Вызываем событие
+                                    document.dispatchEvent(event);
+
+                                    var results = new Element('div', {'styles': {'display': 'none'}}).set('html', returns);
+
+                                    this.categorys = results.getElement("div[id=joomshopping_categorys_search]");
+
+
+                                    var tmp = document.id('rokajaxsearch_tmp');
+
+                                    var wrapper = results.getElement('.contentpaneopen');
+                                    if (wrapper) {
+                                        results.getChildren().each(function(div) {
+                                            if (div.get('class') == 'contentpaneopen' && div.id != 'page') {
+                                                tmp.set('html', div.innerHTML);
+                                            }
+                                        });
+                                    } else {
+                                        results.inject(document.body);
+                                        results.setStyles({
+                                            'display': 'block',
+                                            'position': 'absolute',
+                                            'top': -10000
+                                        });
+                                        wrapper = results.getElement('div.search-results') || results.getElement('div.search') || results.getElement('div[id=page]') || results.getElement('div.items');
+
+                                        if (!wrapper) wrapper = results.getElement('div.search');
+                                        results.dispose();
+                                        if (wrapper) {
+                                            var rs = wrapper.getElement('.search-results') || wrapper.getElement('.search') || wrapper.getElement('.results') || wrapper;
+                                            tmp.adopt(rs);
+                                        }
+                                    }
+
+
+                                    this.results.empty().removeClass('roksearch_results').setStyle('visibility', 'visible');
+
+                                    this.arrowleft = null;
+                                    this.arrowright = null;
+                                    this.selectedEl = -1;
+                                    this.els = [];
+
+                                    if (results.getElement('.contentpaneopen'))	this.outputTable();
+                                    else this.outputTableless();
+
+                                    tmp.empty().setStyle('visibility','visible');
+                                    input.removeClass('loading');
+
+                                    var pos = input.getCoordinates(), selfz = this;
+                                    selfz.results.setStyles({
+                                        'top': pos.top + pos.height,
+                                        'left': selfz.getLeft(input)
+                                    });
+
+                                    selfz.fx.start('opacity', 1);
+                                    selfz.fireEvent('loaded');
+
+                                }.bind(self)
+                            });
+
+                            if (self.options.wordpress) {
+                                self.timer = request.get.delay(500, request, [{
+                                    's' : this.value.replace(/\"/g, ''),
+                                    'task': 'search',
+                                    'action': 'rokajaxsearch',
+                                    'r' : Date.now()
+                                }]);
+                            } else {
+                                console.log( self )
+                                console.trace()
+                                self.timer = request.get.delay(1000, request, [{
+                                    'type': 'raw',
+                                    'option' : 'com_search',
+                                    'view' : 'search',
+                                    'searchphrase' : self.options.phrase,
+                                    'ordering' : self.options.ordering,
+                                    'limit' : self.options.limit,
+                                    'searchword' : text.replace(/\"/g, ''),
+                                    'tmpl': 'component',
+                                    'r' : Date.now()
+                                }]);
+                            }
+                        } else if (self.type !== 'local') {
+                            self.timer = self.googleStart.delay(500, self);
+                        }
+                    }
+
+                }
+
+               /* setTimeout(function(e) {
+
+
+                    console.log( self.value   )
+
+
+
+
+
+                    var lnk = self.options.searchlink.split("?")[0];
+                    lnk = lnk.replace(self.options.uribase, '');
+                    lnk = (lnk) ? lnk : "index.php";
+
+                    var uri = self.options.uribase + lnk,
+                        b = self;
+
+                    if (self.options.wordpress) {
+                        uri = self.options.uribase + self.options.searchlink;
+                    }
+
+                    if (self.value === "") {
+                        var h = this.options.hidedivs.split(" ");
+                        this.results.empty()
+                            .removeClass("roksearch_results")
+                            .setStyle("visibility", "hidden");
+                        if (h.length > 0 && h !== "") {
+                            h.each(function(e) {
+                                document.id(e).setStyle("visibility", "visible");
+                            });
+                        }
+                    } else
+                        {
+                        if (self.type === "local") {
+
+                            console.log( self.value )
+                            console.log( this  )
+
+                            var c = this.value.split('"');
+                            if (c.length >= 3) {
+                                this.options.phrase = "exact";
+                            } else {
+                                this.options.phrase = this.searchphrase;
+                            }
+                            var d = new Request({
+                                url: uri ,
+                                method: "get",
+                                delay: 200,
+                                onRequest: function() {
+                                    b.addClass("loading");
+                                }.bind(self),
+                                onSuccess: function(r, s, p) {
+                                    var n = new Element("div", {
+                                        styles: {
+                                            display: "none"
+                                        }
+                                    }).set("html", r);
+                                    this.categorys = n.getElement("div[id=joomshopping_categorys_search]");
+                                    var o = document.id("rokajaxsearch_tmp");
+                                    var e = n.getElement(".contentpaneopen");
+                                    if (e) {
+                                        n.getChildren().each(function(t) {
+                                            if (t.get("class") == "contentpaneopen" && t.id != "page") {
+                                                o.set("html", t.innerHTML);
+                                            }
+                                        });
+                                    } else {
+                                        n.inject(document.body);
+                                        n.setStyles({
+                                            display: "block",
+                                            position: "absolute",
+                                            top: -10000
+                                        });
+                                        e = n.getElement("div.search-results") || n.getElement("div.search") || n.getElement("div[id=page]") || n.getElement("div.items");
+                                        if (!e) {
+                                            e = n.getElement("div.search");
+                                        }
+                                        n.dispose();
+                                        if (e) {
+                                            var m = e.getElement(".search-results") || e.getElement(".search") || e.getElement(".results") || e;
+                                            o.adopt(m);
+                                        }
+                                    }
+                                    this.results.empty()
+                                        .removeClass("roksearch_results")
+                                        .setStyle("visibility", "visible");
+                                    this.arrowleft = null;
+                                    this.arrowright = null;
+                                    this.selectedEl = -1;
+                                    this.els = [];
+                                    if (n.getElement(".contentpaneopen"))
+                                    {
+                                        this.outputTable();
+                                    }
+                                    else
+                                        {
+                                        this.outputTableless();
+                                    }
+                                    o.empty().setStyle("visibility", "visible");
+                                    b.removeClass("loading");
+                                    var q = b.getCoordinates(),
+                                        k = this;
+                                    k.results.setStyles({
+                                        top: q.top + q.height,
+                                        left: k.getLeft(b)
+                                    });
+                                    k.fx.start("opacity", 1);
+                                    k.fireEvent("loaded");
+                                }.bind(a)
+                            });
+                            if (self.options.wordpress) {
+                                this.timer = d.get.delay(500, d, [{
+                                    s: self.value.replace(/\"/g, ""),
+                                    task: "search",
+                                    action: "rokajaxsearch",
+                                    r: Date.now()
+                                }]);
+                            } else
+                                {
+                                self.timer = d.get.delay(500, d, [{
+                                    type: "raw",
+                                    option: "com_search",
+                                    view: "search",
+                                    // category_id: document.id("category_id").value,
+                                    searchphrase: this.options.phrase,
+                                    ordering: this.options.ordering,
+                                    limit: this.options.limit,
+                                    searchword: self.value.replace(/\"/g, ""),
+                                    tmpl: "component",
+                                    r: Date.now()
+                                }]);
+                            }
+                        } else {
+                            if (self.type !== "local") {
+                                self.timer = self.googleStart.delay(500, self);
+                            }
+                        }
+                    }
+                    return true;
+                }, 0);*/
+            },
 
             'keydown': function(e) {
                 clearTimeout(this.timer);
-
-                if (e.key == 'enter') e.stop();
+                if (e.key === 'enter') e.stop();
             },
 
             'keyup': function(e) {
-                if (e.code == 17 || e.code == 18 || e.code == 224 || e.alt || e.control || e.meta) return false;
-                if (e.alt || e.control  || e.meta || e.key == 'esc' || e.key == 'up' || e.key == 'down' || e.key == 'left' || e.key == 'right') return true;
-                if (e.key == 'enter') e.stop();
-                if (e.key == 'enter' && self.selectedEl != -1) {
-                    if (self.selectedEl || self.selectedEl == 0) location.href = self.els[self.selectedEl].getFirst('a');
+
+                if (e.code === 17 || e.code === 18 || e.code === 224 || e.alt || e.control || e.meta) return false;
+                if (e.alt || e.control  || e.meta || e.key === 'esc' || e.key === 'up' || e.key === 'down' || e.key === 'left' || e.key === 'right') return true;
+                if (e.key === 'enter') e.stop();
+                if (e.key === 'enter' && self.selectedEl !== -1) {
+                    if (self.selectedEl || self.selectedEl === 0)
+                        location.href = self.els[self.selectedEl].getFirst('a');
                     return false;
                 }
 
@@ -295,18 +594,29 @@ var RokAjaxSearch = new Class({
                 lnk = lnk.replace(self.options.uribase, '');
                 lnk = (lnk) ? lnk : "index.php";
 
-                var uri = self.options.uribase + lnk, input = this;
-                if (self.options.wordpress) uri = self.options.uribase + self.options.searchlink;
+                var uri = self.options.uribase + lnk,
+                    input = this;
 
-                if (this.value == ''){
+                if (self.options.wordpress){
+                    uri = self.options.uribase + self.options.searchlink;
+                }
+
+
+
+                console.log( this  )
+                console.log( this.value )
+                if (this.value === ''){
                     var splitDivs = self.options.hidedivs.split(" ");
                     self.results.empty().removeClass('roksearch_results').setStyle('visibility', 'hidden');
 
-                    if (splitDivs.length > 0 && splitDivs != '') splitDivs.each(function(div){
+                    if (splitDivs.length > 0 && splitDivs !== '') splitDivs.each(function(div){
                         document.id(div).setStyle('visibility', 'visible');
                     });
-                } else {
-                    if (self.type == 'local') {
+
+                } else
+                    {
+
+                    if (self.type === 'local') {
                         var exact = this.value.split('"');
                         if (exact.length >= 3) {
                             self.options.phrase = 'exact';
@@ -390,7 +700,9 @@ var RokAjaxSearch = new Class({
                                 'r' : Date.now()
                             }]);
                         } else {
-                            self.timer = request.get.delay(500, request, [{
+                            console.log( self )
+                            console.trace()
+                            self.timer = request.get.delay(1000, request, [{
                                 'type': 'raw',
                                 'option' : 'com_search',
                                 'view' : 'search',
@@ -402,7 +714,7 @@ var RokAjaxSearch = new Class({
                                 'r' : Date.now()
                             }]);
                         }
-                    } else if (self.type != 'local') {
+                    } else if (self.type !== 'local') {
                         self.timer = self.googleStart.delay(500, self);
                     }
                 }
@@ -417,37 +729,37 @@ var RokAjaxSearch = new Class({
     keyEvents: function() {
         var bounds = {
             'keyup': function(e) {
-                if (e.key == 'left' || e.key == 'right' || e.key == 'up' || e.key == 'down' || e.key == 'enter' || e.key == 'esc') {
+                if (e.key === 'left' || e.key === 'right' || e.key === 'up' || e.key === 'down' || e.key === 'enter' || e.key === 'esc') {
                     e.stop();
 
                     var store = false;
-                    if (e.key == 'left' && this.arrowleft) this.arrowleft.fireEvent('click');
-                    else if (e.key == 'right' && this.arrowright) this.arrowright.fireEvent('click');
-                    else if (e.key == 'esc' && this.close) this.close.fireEvent('click', e);
-                    else if (e.key == 'down') {
+                    if (e.key === 'left' && this.arrowleft) this.arrowleft.fireEvent('click');
+                    else if (e.key === 'right' && this.arrowright) this.arrowright.fireEvent('click');
+                    else if (e.key === 'esc' && this.close) this.close.fireEvent('click', e);
+                    else if (e.key === 'down') {
                         store = this.selectedEl;
 
-                        if (this.selectedEl == -1) this.selectedEl = (this.options.perpage) * this.current;
+                        if (this.selectedEl === -1) this.selectedEl = (this.options.perpage) * this.current;
                         else if (this.selectedEl + 1 < this.els.length) this.selectedEl++;
                         else return;
 
                         if (store != -1) this.els[store].fireEvent('mouseleave');
 
                         if ((this.selectedEl/this.options.perpage).toInt() > this.current) this.arrowright.fireEvent('click', true);
-                        if (this.selectedEl || this.selectedEl == 0) this.els[this.selectedEl].fireEvent('mouseenter');
-                    } else if (e.key == 'up') {
+                        if (this.selectedEl || this.selectedEl === 0) this.els[this.selectedEl].fireEvent('mouseenter');
+                    } else if (e.key === 'up') {
                         store = this.selectedEl;
 
-                        if (this.selectedEl == -1) this.selectedEl = (this.options.perpage) * this.current;
+                        if (this.selectedEl === -1) this.selectedEl = (this.options.perpage) * this.current;
                         else if (this.selectedEl - 1 >= 0) this.selectedEl--;
                         else return;
 
                         if (store != -1) this.els[store].fireEvent('mouseleave');
 
                         if ((this.selectedEl/this.options.perpage).toInt() < this.current) this.arrowleft.fireEvent('click', true);
-                        if (this.selectedEl || this.selectedEl == 0) this.els[this.selectedEl].fireEvent('mouseenter');
-                    } else if (e.key == 'enter') {
-                        if (this.selectedEl || this.selectedEl == 0) window.location = this.els[this.selectedEl].getElement('a');
+                        if (this.selectedEl || this.selectedEl === 0) this.els[this.selectedEl].fireEvent('mouseenter');
+                    } else if (e.key === 'enter') {
+                        if (this.selectedEl || this.selectedEl === 0) window.location = this.els[this.selectedEl].getElement('a');
                     }
                 }
             }.bind(this)
@@ -512,7 +824,7 @@ var RokAjaxSearch = new Class({
 
                 if (data.length > 0){
                     data.each(function(div, j) {
-                        if (div.get('tag') == "div"){
+                        if (div.get('tag') === "div"){
                             if (div.getChildren().length > 2 && !div.getPrevious()){
                                 var suri = div.getFirst().getNext().getProperty('href');
 
@@ -528,7 +840,7 @@ var RokAjaxSearch = new Class({
                                     },
                                     'mouseleave': function() {
                                         this.removeClass(self.rows[i % 2] + '-hover');
-                                        if (self.selectedEl == i) self.selectedEl = -1;
+                                        if (self.selectedEl === i) self.selectedEl = -1;
                                     }
                                 });
 

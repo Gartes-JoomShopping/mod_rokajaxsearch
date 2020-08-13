@@ -7,10 +7,12 @@
     <authorUrl>http://www.rockettheme.com</authorUrl>
     <copyright>(C) 2005 - 2014 RocketTheme, LLC. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-    <version>3.0.6</version>
+    <version>3.0.9</version>
     <description>RokAjaxSearch is an ajaxian searcher that displays the results immediately and allows to choose the
         proper one.
     </description>
+
+    <scriptfile>script.php</scriptfile>
 
     <files>
         <folder>assets</folder>
@@ -30,6 +32,33 @@
     <config>
         <fields name="params">
             <fieldset addfieldpath="/modules/mod_rokajaxsearch/fields" name="basic">
+            
+                <!--  системное имя модуля             -->
+                <field name="_name"
+                	type="text"
+                	default="mod_rokajaxsearch"
+                	class="_name "
+                	readonly="1"
+                	required="1"
+                	label="MOD_ROKAJAXSEARCH_NAME"
+                	description="MOD_ROKAJAXSEARCH__NAME_DESC"
+                	showon=""
+                	hint=""
+                	filter="raw" />
+                <field name="_fileJsonPath"
+                	type="text"
+                	default="/modules/mod_rokajaxsearch/assets/files"
+                	class="fileJsonPath "
+                	readonly="1"
+                	required="1"
+                	label="MOD_ROKAJAXSEARCH_FILE_JSON_PATH"
+                	description="MOD_ROKAJAXSEARCH_FILE_JSON_PATH_DESC"
+                	showon=""
+                	hint=""
+                	filter="raw" />
+                	
+                	    
+
                 <field default="index.php?option=com_search&amp;view=search&amp;tmpl=component"
                        description="Relative path to your search page. &lt;br /&gt;Example: index.php?option=com_search"
                        label="Search page URL." name="search_page" type="text"/>

@@ -16,6 +16,8 @@
 window.modRokajaxsearchDrive = function () {
     var $ = jQuery ;
     var self = this ;
+    this.__module
+    this.__param = Joomla.getOptions( this.__module , {} );
     this._Setting = {
          selectorInput : '#roksearch_search_str'
     };
@@ -46,6 +48,7 @@ window.modRokajaxsearchDrive = function () {
     };
 
     this.Init = function () {
+        // Событие нажатие на лупу
         $('#rokajaxsearch-icon').on('click' , self.onSearchIconClick );
 
         // Слушаем событие
