@@ -71,6 +71,9 @@ class mod_rokajaxsearchInstallerScript
         \GNZ11\Extensions\ScriptFile::updateProcedure($typeExt, $parent);
 
 
+
+
+
     }
 
     /**
