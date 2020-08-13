@@ -36,7 +36,7 @@ $arrFiles = [
         '/language/en-GB/en-GB.mod_rokajaxsearch.ini' ,
     ],
 ];
-\GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;
+// \GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;
 
 $helper->inizialize($params->get('include_css'), $params->get('offset_search_result'), $params);
 
