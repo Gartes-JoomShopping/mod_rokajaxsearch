@@ -291,18 +291,18 @@ var RokAjaxSearch = new Class({
                 var text ;
                 var lnk ;
 
-
+                console.log( self.timer )
 
                 clearTimeout(self.timer);
 
                 setTimeout( function() {
                     text = $(input).val();
                     startPaste();
-                }, 100);
+                }, 0);
 
                 function startPaste (){
                     lnk = self._getUrlink( self ) ;
-                    uri += lnk
+                    // uri += lnk
 
                     if (self.options.wordpress)
                         uri = self.options.uribase + self.options.searchlink;
@@ -355,7 +355,7 @@ var RokAjaxSearch = new Class({
                                     var wrapper = results.getElement('.contentpaneopen');
                                     if (wrapper) {
                                         results.getChildren().each(function(div) {
-                                            if (div.get('class') == 'contentpaneopen' && div.id != 'page') {
+                                            if (div.get('class') === 'contentpaneopen' && div.id !== 'page') {
                                                 tmp.set('html', div.innerHTML);
                                             }
                                         });
@@ -412,7 +412,7 @@ var RokAjaxSearch = new Class({
                             } else {
                                 console.log( self )
                                 console.trace()
-                                self.timer = request.get.delay(1000, request, [{
+                                self.timer = request.get.delay(500, request, [{
                                     'type': 'raw',
                                     'option' : 'com_search',
                                     'view' : 'search',
@@ -693,7 +693,7 @@ var RokAjaxSearch = new Class({
                         });
 
                         if (self.options.wordpress) {
-                            self.timer = request.get.delay(500, request, [{
+                            self.timer = request.get.delay(1000, request, [{
                                 's' : this.value.replace(/\"/g, ''),
                                 'task': 'search',
                                 'action': 'rokajaxsearch',
@@ -702,7 +702,7 @@ var RokAjaxSearch = new Class({
                         } else {
                             console.log( self )
                             console.trace()
-                            self.timer = request.get.delay(1000, request, [{
+                            self.timer = request.get.delay(600, request, [{
                                 'type': 'raw',
                                 'option' : 'com_search',
                                 'view' : 'search',

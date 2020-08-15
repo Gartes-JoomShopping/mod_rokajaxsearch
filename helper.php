@@ -35,6 +35,7 @@ class modRokajaxsearchHelper {
 		JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
 		GNZ11\Core\Js::instance();
 
+        $this->getVersion();
 
 		$doc = \Joomla\CMS\Factory::getDocument();
 		$uri = \Joomla\CMS\Uri\Uri::getInstance( $uri = 'SERVER' );
@@ -51,16 +52,28 @@ class modRokajaxsearchHelper {
 	
 	function inizialize( $css_style, $offset, &$params){
 
+        $doc = \Joomla\CMS\Factory::getDocument();
+
 	    $theme = $params->get('theme', 'blue');
 
         JHtml::_('behavior.framework', true);
-		$doc = JFactory::getDocument();
+
 
 		$doc->addScriptOptions('siteUrlsiteUrl'  , JURI::base(true) ) ;
-		
+
+		$JSParams = [
+		    '__v' =>   MOD_ROKAJAXSEARCH_VERSION  ,
+            'selectors' => [
+                'searchIcon' => '#rokajaxsearch-icon' ,
+                'input' => '#roksearch_search_str'  ,
+            ]
+        ];
+		$doc->addScriptOptions('mod_rokajaxsearch' , $JSParams ) ;
 		
         $helper = new modRokajaxsearchHelper();
 		$css = $helper->getCSSPath('rokajaxsearch.css', 'mod_rokajaxsearch');
+
+
 		$iebrowser = $helper->getBrowser();
 
 		if($css_style == 1 && $css != false) {
@@ -102,7 +115,44 @@ class modRokajaxsearchHelper {
 		$blogsearch = ($params->get('blogsearch', 0)) ? 1 : 0;
 		$imagesearch = ($params->get('imagesearch', 0)) ? 1 : 0;
 		$videosearch = ($params->get('videosearch', 0)) ? 1 : 0;
-		$ras_init = "window.addEvent((window.webkit) ? 'load' : 'domready', function() {
+
+		$paramsJs = [
+            'results'=>JText::_('RESULTS') ,
+             'close' => '',
+             'websearch' => $websearch,
+             'blogsearch' => $blogsearch,
+             'imagesearch' => $imagesearch,
+             'videosearch' => $videosearch,
+             'imagesize' => $params->get('image_size', 'MEDIUM'),
+             'safesearch' => $params->get('safesearch', 'MODERATE'),
+             'search' => JText::_('SEARCH'),
+             'readmore' => JText::_('READMORE'),
+             'noresults' => JText::_('NORESULTS'),
+             'advsearch' => JText::_('ADVSEARCH'),
+             'page' => JText::_('PAGE'),
+             'page_of' => JText::_('PAGE_OF'),
+             'searchlink' => JRoute::_(JURI::Base() . htmlentities($params->get('search_page')), true),
+             'advsearchlink' => JRoute::_(JURI::Base() . htmlentities($params->get('adv_search_page')), true),
+             'uribase' => JRoute::_(JURI::Base(), true),
+             'limit' => $params->get('limit', '10'),
+             'perpage' => $params->get('perpage', '3'),
+            'ordering' => $params->get('ordering', 'newest'),
+            'phrase' => $params->get('searchphrase', 'any'),
+            'hidedivs' => $params->get('hide_divs', ''),
+            'includelink' => $params->get('include_link', 1),
+            'viewall' => JText::_('VIEWALL'),
+            'estimated' => JText::_('ESTIMATED'),
+            'showestimated' => $params->get('show_estimated', 1),
+            'showpagination' => $params->get('show_pagination', 1),
+            'showcategory' => $params->get('include_category', 1),
+            'showreadmore' => $params->get('show_readmore', 1),
+            'showdescription' => $params->get('show_description', 1),
+        ];
+        $doc->addScriptOptions('mod_rokajaxsearch' , $paramsJs ) ;
+
+
+
+		/*$ras_init = "window.addEvent((window.webkit) ? 'load' : 'domready', function() {
 				window.rokajaxsearch = new RokAjaxSearch({
 					'results': '".JText::_('RESULTS')."',
 					'close': '',
@@ -136,7 +186,7 @@ class modRokajaxsearchHelper {
 					'showdescription': ".$params->get('show_description', 1)."
 				});
 			});";
-		$doc->addScriptDeclaration($ras_init);
+		$doc->addScriptDeclaration($ras_init);*/
 
 
 		/* Google API */
@@ -283,7 +333,16 @@ button.search-form__microphone.speechRecognition:hover svg {
 	    $dom::fetchAttr($dom ,$script , ['src'=>$Link , 'async'=>$async ] );
 	    $dom->appendChild($script);
 	    echo  $dom->saveHTML() ;
-	   
+	}
+
+	function getVersion(){
+        if (!defined('MOD_ROKAJAXSEARCH_VERSION')){
+            $xml_file = JPATH_ROOT . '/modules/mod_rokajaxsearch/mod_rokajaxsearch.xml';
+            $dom = new DOMDocument("1.0", "utf-8");
+            $dom->load($xml_file);
+            $version = $dom->getElementsByTagName('version')->item(0)->textContent;
+            define('MOD_ROKAJAXSEARCH_VERSION', $version );
+        }
     }
 
     

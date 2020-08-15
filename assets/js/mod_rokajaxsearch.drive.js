@@ -1,11 +1,4 @@
-(function () {
 
-    setTimeout(function () {
-        var Drive = new window.modRokajaxsearchDrive();
-        Drive.Init() ;
-    },1000 )
-
-})();
 
 
 
@@ -16,11 +9,9 @@
 window.modRokajaxsearchDrive = function () {
     var $ = jQuery ;
     var self = this ;
-    this.__module
+    this.__module = 'mod_rokajaxsearch';
     this.__param = Joomla.getOptions( this.__module , {} );
-    this._Setting = {
-         selectorInput : '#roksearch_search_str'
-    };
+    this.Host = this.Options.Ajax.siteUrl ;
 
     this.speechGo = false ;
     /**
@@ -48,25 +39,37 @@ window.modRokajaxsearchDrive = function () {
     };
 
     this.Init = function () {
+        console.log( this.__param  )
         // Событие нажатие на лупу
-        $('#rokajaxsearch-icon').on('click' , self.onSearchIconClick );
+        $( this.__param.selectors.searchIcon ).on('click' , self.onSearchIconClick );
 
         // Слушаем событие
         document.addEventListener('onKeyUpSuccess', self.parseResultCount, false);
 
         var input = document.getElementById('roksearch_search_str');
+
         var $b = $('body') ;
         var $overlay = $('<div />' , {
             id : 'roksearch_overlay',
         });
+        // Потеря фокуса поле Поиска
         input.onblur = function () {
            $b.find('#roksearch_overlay').remove();
            $b.removeClass('roksearch-active')
         };
+        // Получение фокуса поле Поиска
         input.onfocus = function() {
             $b.append($overlay);
             $b.addClass('roksearch-active') ;
+            self.load.js( self.Host + 'modules/mod_rokajaxsearch/js/rokajaxsearch.js?'+self.__param.__v).then(function (){
+                if (typeof self.__param.is_init === 'undefined' ){
+                    window.rokajaxsearch = new RokAjaxSearch( self.__param );
+                    self.__param.is_init = true ;
+                }
+
+            });
         };
+        // Если запись разрешена
         if ('webkitSpeechRecognition' in window) {
             self.RecognitionInit();
         }
@@ -87,10 +90,10 @@ window.modRokajaxsearchDrive = function () {
      * Загрузка модуля  Recognition
      * @constructor
      */
-    this.RecognitionInit  =function () {
+    this.RecognitionInit  = function () {
 
         var siteUrl = Joomla.getOptions('siteUrlsiteUrl' , '' ) ;
-        // var urlLib = window.CoreGnz11.SiteUrl+'libraries/GNZ11/assets/js/gnz11.js' ;
+
         var urlLib = siteUrl+'/libraries/GNZ11/assets/js/gnz11.js' ;
         if (window.CoreGnz11.Status === 'loading'){
             var I = setInterval(function () {
@@ -107,20 +110,19 @@ window.modRokajaxsearchDrive = function () {
     /**
      * Событие - начало распознования речи
      */
-    this.onStartSpeechRecognition = function ($target) {
-        $target = $($target) ;
+    this.onStartSpeechRecognition = function () {
         // Очитстить поле ввода при старте записи
-        $(self._Setting.selectorInput).val('')
+        $(self.__param.selectors.input).val('');
+        // TODO Добавить загрузку rokajaxsearch.js
+
     };
-
-
 
     /**
      * Событие - окончание распознования речи
      */
     this.onEndSpeechRecognition = function () {
-        $(self._Setting.selectorInput).trigger('keydown')
-        $(self._Setting.selectorInput).trigger('keyup')
+        $(self.__param.selectors.input).trigger('keydown')
+        $(self.__param.selectors.input).trigger('keyup')
         var element = document.getElementById('roksearch_search_str');
         /**
          * Программная генерация событий DOM 2 Events
@@ -159,7 +161,7 @@ window.modRokajaxsearchDrive = function () {
                         {
                             'parent' : false , // родительский блок где искать (msg_element)
                             'key' : false, // селектор элемента || jQuery объект  в которой устанавливать кнопки
-                            'target_element' : self._Setting.selectorInput, // селектор элемента или || jQuery объект в который вставлять текст
+                            'target_element' : self.__param.selectors.input, // селектор элемента или || jQuery объект в который вставлять текст
                         },
                     ],
                     /**
@@ -250,3 +252,15 @@ window.modRokajaxsearchDrive = function () {
         document.getElementsByTagName("head")[0].appendChild(script);
     }
 };
+
+
+(function () {
+
+    setTimeout(function () {
+        window.modRokajaxsearchDrive.prototype = new GNZ11();
+        var Drive = new window.modRokajaxsearchDrive();
+
+        Drive.Init() ;
+    },1000 )
+
+})();

@@ -28,16 +28,24 @@ die(__FILE__ .' '. __LINE__ );*/
 require_once( dirname( __FILE__ ) . '/helper.php' );
 $helper = new modRokajaxsearchHelper();
 
-$pathFileJson = '/modules/mod_rokajaxsearch/assets/files' ;
+/**
+ * Добавить языковой файл для удаления - перед обновлением модуля
+ */
+ $pathFileJson = '/modules/mod_rokajaxsearch/assets/files' ;
 $arrFiles = [
     # Файлы которые удалить при обновлени
     # Указываем путь от корня сайта
     'DelFiles' => [
         '/language/en-GB/en-GB.mod_rokajaxsearch.ini' ,
     ],
+    'IncludeFiles' => [
+        '/tmp/correcting.php'
+    ]
 ];
-// \GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;
+\GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;
 
-$helper->inizialize($params->get('include_css'), $params->get('offset_search_result'), $params);
+$css_style = $params->get('include_css') ;
+$offset = $params->get('offset_search_result') ;
+$helper->inizialize( $css_style , $offset , $params);
 
 require(JModuleHelper::getLayoutPath('mod_rokajaxsearch'));
