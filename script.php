@@ -71,7 +71,11 @@ class mod_rokajaxsearchInstallerScript
     {
         // manifest file version
         $this->release = $parent->get('manifest')->version;
-        $this->minimum_version_gnz11 = $parent->get('manifest')->version_gnz11[0];
+        foreach ( $parent->get('manifest')->version_gnz11 as $v )
+        {
+            $this->minimum_version_gnz11 = $v
+        }#END FOREACH
+//        $this->minimum_version_gnz11 = $parent->get('manifest')->version_gnz11[0];
 
         $VersionGnz11 = $this->getVersionGnz11();
         
