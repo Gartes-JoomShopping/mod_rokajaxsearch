@@ -73,7 +73,9 @@ class mod_rokajaxsearchInstallerScript
         $this->release = $parent->get('manifest')->version;
         foreach ( $parent->get('manifest')->version_gnz11 as $v )
         {
-            $this->minimum_version_gnz11 = $v
+            $this->minimum_version_gnz11 = $v ; 
+            echo'<pre>';print_r( $v );echo'</pre>'.__FILE__.' '.__LINE__;
+            
         }#END FOREACH
 //        $this->minimum_version_gnz11 = $parent->get('manifest')->version_gnz11[0];
 
