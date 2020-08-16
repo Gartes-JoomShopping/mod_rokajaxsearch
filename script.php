@@ -84,8 +84,8 @@ class mod_rokajaxsearchInstallerScript
             die(__FILE__ .' '. __LINE__ );
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
-            Factory::getApplication()->enqueueMessage('Error msg' , 'error' ) ;
-            die(__FILE__ .' '. __LINE__ );
+            Factory::getApplication('administrator')->enqueueMessage('Error msg' , 'error' ) ;
+
             return false;
             die(__FILE__ .' '. __LINE__ );
         }
