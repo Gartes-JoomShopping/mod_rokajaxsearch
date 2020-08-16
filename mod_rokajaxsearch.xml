@@ -48,7 +48,12 @@
     <config>
         <fields name="params">
             <fieldset addfieldpath="/modules/mod_rokajaxsearch/fields" name="basic">
-            
+                <field name="minimum_version_gnz11"
+                	type="hidden"
+                	default="0.4.1"
+                	filter="raw" />
+                	
+                	
                 <!--  системное имя модуля             -->
                 <field name="_name"
                 	type="text"
