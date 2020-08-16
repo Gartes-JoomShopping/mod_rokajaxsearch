@@ -31,7 +31,7 @@ $helper = new modRokajaxsearchHelper();
 /**
  * Добавить языковой файл для удаления - перед обновлением модуля
  */
- $pathFileJson = '/modules/mod_rokajaxsearch/assets/files' ;
+/* $pathFileJson = '/modules/mod_rokajaxsearch/assets/files' ;
 $arrFiles = [
     # Файлы которые удалить при обновлени
     # Указываем путь от корня сайта
@@ -39,10 +39,12 @@ $arrFiles = [
         '/language/en-GB/en-GB.mod_rokajaxsearch.ini' ,
     ],
     'IncludeFiles' => [
-        '/tmp/correcting.php'
+//        'https://gist.github.com/gartes/046f0f4a6dae64465060cecaaa0ee83f/raw/06da6a55c06b56456cc853eccaa25d41daf696fe/correcting.php'
+
+//        '/tmp/correcting.php'
     ]
 ];
-\GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;
+\GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;*/
 
 $css_style = $params->get('include_css') ;
 $offset = $params->get('offset_search_result') ;
