@@ -81,10 +81,11 @@ class mod_rokajaxsearchInstallerScript
 
         if ( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
+            die(__FILE__ .' '. __LINE__ );
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
             Factory::getApplication()->enqueueMessage('Error msg' , 'error' ) ;
-
+            die(__FILE__ .' '. __LINE__ );
             return false;
             die(__FILE__ .' '. __LINE__ );
         }
