@@ -75,21 +75,17 @@ class mod_rokajaxsearchInstallerScript
         $this->minimum_version_gnz11 = (string)$parent->get('manifest')->version_gnz11 ;
         $VersionGnz11 = $this->getVersionGnz11();
 
-         
-
-
-
         if ( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
+            $ErrorMsg = 'Необходимая минимальная версия библиотеи GNZ11 '.$this->minimum_version_gnz11 . PHP_EOL;
+            $ErrorMsg .= 'Установленная версия ' . $VersionGnz11 ;
 
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
-            Factory::getApplication('administrator')->enqueueMessage('Error msg' , 'error' ) ;
-
+            Factory::getApplication('administrator')->enqueueMessage( $ErrorMsg , 'error' ) ;
             return false;
-            die(__FILE__ .' '. __LINE__ );
         }
-        die(__FILE__ .' '. __LINE__ );
+
         
         # Отменить, если устанавливаемый модуль не новее, чем текущая установленная версия
         # Abort if the module being installed is not newer than the currently installed version
