@@ -74,8 +74,9 @@ class mod_rokajaxsearchInstallerScript
         foreach ( $parent->get('manifest')->version_gnz11 as $v )
         {
             $this->minimum_version_gnz11 = $v ; 
-            echo'<pre>';print_r( $v );echo'</pre>'.__FILE__.' '.__LINE__;
-            
+            echo'<pre>';print_r( (string)$v );echo'</pre>'.__FILE__.' '.__LINE__;
+
+
         }#END FOREACH
 //        $this->minimum_version_gnz11 = $parent->get('manifest')->version_gnz11[0];
 
@@ -85,6 +86,7 @@ class mod_rokajaxsearchInstallerScript
         echo'<pre>';print_r( $this->release );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $this->minimum_version_gnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
+die(__FILE__ .' '. __LINE__ );
 
         
         if (version_compare( $this->minimum_version_gnz11 , $VersionGnz11  , '<'))
