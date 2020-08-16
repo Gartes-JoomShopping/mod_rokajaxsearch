@@ -74,9 +74,11 @@ class mod_rokajaxsearchInstallerScript
         $this->minimum_version_gnz11 = (string)$parent->get('manifest')->version_gnz11 ;
         $VersionGnz11 = $this->getVersionGnz11();
 
+        echo'<pre>';print_r( version_compare( $this->minimum_version_gnz11 , $VersionGnz11  , '<') );echo'</pre>'.__FILE__.' '.__LINE__;
+        echo'<pre>';print_r( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') );echo'</pre>'.__FILE__.' '.__LINE__;
 
         
-        if (version_compare( $this->minimum_version_gnz11 , $VersionGnz11  , '<'))
+        if ( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
