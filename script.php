@@ -77,7 +77,10 @@ class mod_rokajaxsearchInstallerScript
         echo'<pre>';print_r( version_compare( $this->minimum_version_gnz11 , $VersionGnz11  , '<') );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') );echo'</pre>'.__FILE__.' '.__LINE__;
 
-        
+die(__FILE__ .' '. __LINE__ );
+
+
+
         if ( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
             # Выдать сообщение об ошибке и вернуть false
