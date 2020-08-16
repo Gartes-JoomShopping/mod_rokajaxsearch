@@ -83,10 +83,10 @@ class mod_rokajaxsearchInstallerScript
         {
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
-            CMSApplication::getInstance('site')->enqueueMessage('Error msg' , 'error' ) ;
+            Factory::getApplication()->enqueueMessage('Error msg' , 'error' ) ;
 
             return false;
-            
+            die(__FILE__ .' '. __LINE__ );
         }
         die(__FILE__ .' '. __LINE__ );
         
