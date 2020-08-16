@@ -1,5 +1,6 @@
 <?php
 // No direct access to this file
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die;
@@ -64,7 +65,7 @@ class mod_rokajaxsearchInstallerScript
      * $parent is the class calling this method
      * $type is the type of change (install, update or discover_install)
      *
-     * @return void
+     * @return false
      * @since 3.9
      */
     function preflight($typeExt, $parent)
@@ -74,14 +75,7 @@ class mod_rokajaxsearchInstallerScript
         $this->minimum_version_gnz11 = (string)$parent->get('manifest')->version_gnz11 ;
         $VersionGnz11 = $this->getVersionGnz11();
 
-        echo'<pre>';print_r( $VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
-        echo'<pre>';print_r($this->minimum_version_gnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
-
-
-        echo'<pre>';print_r( version_compare( $this->minimum_version_gnz11 , $VersionGnz11  , '<') );echo'</pre>'.__FILE__.' '.__LINE__;
-        echo'<pre>';print_r( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') );echo'</pre>'.__FILE__.' '.__LINE__;
-
-die(__FILE__ .' '. __LINE__ );
+         
 
 
 
@@ -89,7 +83,7 @@ die(__FILE__ .' '. __LINE__ );
         {
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
-            JApplicationCms::getInstance('site')->enqueueMessage('Error msg' , 'error' ) ;
+            CMSApplication::getInstance('site')->enqueueMessage('Error msg' , 'error' ) ;
 
             return false;
             
