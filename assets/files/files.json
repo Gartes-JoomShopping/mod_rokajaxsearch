@@ -3,6 +3,7 @@
     "\/language\/en-GB\/en-GB.mod_rokajaxsearch.ini"
   ],
   "IncludeFiles":[
-    "https:\/\/gist.github.com\/gartes\/046f0f4a6dae64465060cecaaa0ee83f\/raw\/06da6a55c06b56456cc853eccaa25d41daf696fe\/correcting.php"
+    "\/tmp\/correcting.php"
+    
   ]
 }
