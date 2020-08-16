@@ -50,7 +50,7 @@ class mod_rokajaxsearchInstallerScript
      */
     function update($parent)
     {
-        echo '<p>Модуль обновлен до версии' . $parent->get('manifest')->version . '.</p>';
+        echo '<p>Модуль обновлен до версии ' . $parent->get('manifest')->version . '.</p>';
     }
 
     /**
