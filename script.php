@@ -68,8 +68,6 @@ class mod_rokajaxsearchInstallerScript
     function preflight($typeExt, $parent)
     {
         JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
-        die(__FILE__ .' '. __LINE__ );
-
         \GNZ11\Extensions\ScriptFile::updateProcedure($typeExt, $parent);
     }
 
