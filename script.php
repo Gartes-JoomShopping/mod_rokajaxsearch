@@ -75,6 +75,7 @@ class mod_rokajaxsearchInstallerScript
 
         $VersionGnz11 = $this->getVersionGnz11();
         
+        echo'<pre>';print_r( $parent->get('manifest') );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $this->release );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
         echo'<pre>';print_r( $this->minimum_version_gnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
