@@ -77,8 +77,8 @@ class mod_rokajaxsearchInstallerScript
 
         if ( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
-            $ErrorMsg = 'Необходимая минимальная версия библиотеи GNZ11 '.$this->minimum_version_gnz11 . PHP_EOL;
-            $ErrorMsg .= 'Установленная версия ' . $VersionGnz11 ;
+            $ErrorMsg = 'Необходимая минимальная версия библиотеи GNZ11 <b>'.$this->minimum_version_gnz11.'</b>' . PHP_EOL;
+            $ErrorMsg .= 'Установленная версия <b>' . $VersionGnz11.'</b>' ;
 
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
