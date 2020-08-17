@@ -118,11 +118,7 @@ class mod_rokajaxsearchInstallerScript
 
 
         echo'<pre>';print_r( $this->VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
-        
 
-
-
-        
         # Отменить, если устанавливаемый модуль не новее, чем текущая установленная версия
         # Abort if the module being installed is not newer than the currently installed version
       /*  if (strtolower($typeExt) === 'update')
@@ -306,15 +302,7 @@ class mod_rokajaxsearchInstallerScript
         {
             return \Joomla\CMS\Language\Text::_('NNEM_ERROR_NO_VALID_URL');
         }
-
-
-
-
-        //        $url = 'http://' . str_replace('http://', '', $url);
         $target = $tmp_path . '/' . uniqid($id) . '.zip';
-
-
-
 
         jimport('joomla.filesystem.file');
         \Joomla\CMS\Factory::getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
