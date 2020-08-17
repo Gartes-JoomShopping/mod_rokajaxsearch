@@ -7,7 +7,7 @@ Todo - Переделать под модуль
         <description><![CDATA[JoomShopping - RokAjaxSearch is an ajaxian searcher]]></description>
         <type>module</type>
         <element>mod_rokajaxsearch</element>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
         <client>0</client>
         <infourl title="Joomla!">https://www.joomla.org/announcements/release-news/5765-joomla-3-9-6-release.html</infourl>
         <downloads>
