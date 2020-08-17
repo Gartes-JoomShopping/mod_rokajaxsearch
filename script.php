@@ -187,7 +187,9 @@ class mod_rokajaxsearchInstallerScript
     }
 
     protected function InstalGnz11(){
-        $this->installDownload('Gnz11', self::Gnz11InstallUrl);
+//        $this->installDownload('Gnz11', self::Gnz11InstallUrl);
+        JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
+        \GNZ11\Extensions\ScriptFile::installDownload()('Gnz11', self::Gnz11InstallUrl);
     }
 
     /**
@@ -267,113 +269,7 @@ class mod_rokajaxsearchInstallerScript
         } 
     }
 
-    /**
-     * Download and install
-     * @param $id
-     * @param $url
-     * @return bool|string
-     * @since 3.9
-     */
-    protected function installDownload($id, $url)
-    {
-        if (!is_string($url))
-        {
-            return Text::_('NNEM_ERROR_NO_VALID_URL');
-        }
 
-
-
-        $url = 'http://' . str_replace('http://', '', $url);
-        $target = Factory::getApplication()->get('tmp_path') . '/' . uniqid($id) . '.zip';
-
-        jimport('joomla.filesystem.file');
-        Factory::getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
-
-        
-        
-        
-        if (!(function_exists('curl_init') && function_exists('curl_exec')) && !ini_get('allow_url_fopen'))
-        {
-            return JText::_('NNEM_ERROR_CANNOT_DOWNLOAD_FILE');
-        }
-        else if (function_exists('curl_init') && function_exists('curl_exec'))
-        {
-            /* USE CURL */
-            $ch = curl_init();
-            $options = array(
-                CURLOPT_URL            => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 30,
-            );
-            $params = JComponentHelper::getParams('com_nonumbermanager');
-            if ($params->get('use_proxy') && $params->get('proxy_host'))
-            {
-                $options[CURLOPT_PROXY] = $params->get('proxy_host') . ($params->get('proxy_port') ? ':' . $params->get('proxy_port') : '');
-                $options[CURLOPT_PROXYUSERPWD] = $params->get('proxy_login') . ':' . $params->get('proxy_password');
-            }
-            curl_setopt_array($ch, $options);
-            $content = curl_exec($ch);
-            curl_close($ch);
-        }
-        else
-        {
-            /* USE FOPEN */
-            $handle = @fopen($url, 'r');
-            if (!$handle)
-            {
-                return JText::_('SERVER_CONNECT_FAILED');
-            }
-
-            $content = '';
-            while (!feof($handle))
-            {
-                $content .= fread($handle, 4096);
-                if ($content === false)
-                {
-                    return JText::_('NNEM_ERROR_FAILED_READING_FILE');
-                }
-            }
-            fclose($handle);
-        }
-
-        if (empty($content))
-        {
-            return Text::_('NNEM_ERROR_CANNOT_DOWNLOAD_FILE');
-        }
-
-        // Write buffer to file
-        File::write($target, $content);
-
-        jimport('joomla.installer.installer');
-        jimport('joomla.installer.helper');
-
-        // Get an installer instance
-        $installer = \Joomla\CMS\Installer\Installer::getInstance();
-
-        echo'<pre>';print_r( $installer );echo'</pre>'.__FILE__.' '.__LINE__;
-        die(__FILE__ .' '. __LINE__ );
-
-
-        // Unpack the package
-        $package = JInstallerHelper::unpack($target);
-
-        // Cleanup the install files
-        if (!is_file($package['packagefile']))
-        {
-            $config = JFactory::getConfig();
-            $package['packagefile'] = $config->get('tmp_path') . '/' . $package['packagefile'];
-        }
-        JInstallerHelper::cleanupInstall($package['packagefile'], $package['packagefile']);
-
-        // Install the package
-        if (!$installer->install($package['dir']))
-        {
-            // There was an error installing the package
-            return JText::sprintf('COM_INSTALLER_INSTALL_ERROR', JText::_('COM_INSTALLER_TYPE_TYPE_' . strtoupper($package['type'])));
-        }
-
-        return true;
-    }
 
 
 }
