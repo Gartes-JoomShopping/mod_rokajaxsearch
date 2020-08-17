@@ -114,6 +114,9 @@ class mod_rokajaxsearchInstallerScript
             echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
             
         } #END IF
+
+
+
         echo'<pre>';print_r( $this->VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
         
 
