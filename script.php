@@ -99,10 +99,13 @@ class mod_rokajaxsearchInstallerScript
     {
         // manifest file version
         $this->release = (string)$parent->get('manifest')->version;
+
+        # Проверить версию Gnz11
         if( !$this->checkVersionGnz11( $parent ) ) {
             $this->InstalGnz11();
             return false;
         } #END IF
+        die(__FILE__ .' '. __LINE__ );
 
 
         
