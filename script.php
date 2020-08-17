@@ -193,9 +193,11 @@ class mod_rokajaxsearchInstallerScript
 
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
-            Factory::getApplication('administrator')->enqueueMessage( $ErrorMsg , 'error' ) ;
+            $this->app->enqueueMessage( $ErrorMsg , 'error' ) ;
             return false;
         }
+        $mes = 'Версия версия библиотеки GNZ11 ('.$this->VersionGnz11.') <b>В актуальном состояни</b></b>';
+        $this->app->enqueueMessage( $mes   ) ;
         return true ;
     }
 
