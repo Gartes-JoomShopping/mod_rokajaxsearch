@@ -103,6 +103,13 @@ class mod_rokajaxsearchInstallerScript
         # Проверить версию Gnz11
         if( !$this->checkVersionGnz11( $parent ) ) {
             $result = $this->InstalGnz11($parent);
+            if( !$result )
+            {
+
+                \Joomla\CMS\Application\CMSApplication::getInstance('administrator')->enqueueMessage('Не удалось скачать и установить библиатеку GNZ11' , 'error' ) ;
+                return false;
+
+            }#END IF
             echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
             
         } #END IF
@@ -123,7 +130,7 @@ class mod_rokajaxsearchInstallerScript
             {
                 # Выдать сообщение об ошибке и вернуть false
                 # Throw some error message and return false
-                JApplicationCms::getInstance('site')->enqueueMessage('Error msg' , 'error' ) ;
+                JApplicationCms::getInstance('administrator')->enqueueMessage('Error msg' , 'error' ) ;
 
                 return false;
             }
@@ -191,20 +198,9 @@ class mod_rokajaxsearchInstallerScript
     }
 
     protected function InstalGnz11($parent){
-        $this->installDownload('Gnz11', self::Gnz11InstallUrl);
+        $result = $this->installDownload('Gnz11', self::Gnz11InstallUrl);
 //        JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
 //        $result = \GNZ11\Extensions\ScriptFile::installDownload('Gnz11', self::Gnz11InstallUrl) ;
-
-
-
-        echo'<pre>';print_r( class_exists('\GNZ11\Extensions\ScriptFile') );echo'</pre>'.__FILE__.' '.__LINE__;
-die(__FILE__ .' '. __LINE__ );
-
-
-
-
-        echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
-        die(__FILE__ .' '. __LINE__ );
 
 
         if( $result )
