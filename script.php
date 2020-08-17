@@ -22,12 +22,13 @@ class mod_rokajaxsearchInstallerScript
      * @var string
      * @since 3.9
      */
-    private $minimum_version_gnz11;
+    protected $minimum_version_gnz11;
     /**
      * @var \Joomla\CMS\Application\CMSApplication|null
      * @since 3.9
      */
     private $app;
+    protected $VersionGnz11;
 
     /**
      * mod_rokajaxsearchInstallerScript constructor.
@@ -106,13 +107,15 @@ class mod_rokajaxsearchInstallerScript
             if( !$result )
             {
 
-                \Joomla\CMS\Application\CMSApplication::getInstance('administrator')->enqueueMessage('Не удалось скачать и установить библиатеку GNZ11' , 'error' ) ;
+                $this->app->enqueueMessage('Не удалось скачать и установить библиатеку GNZ11' , 'error' ) ;
                 return false;
 
             }#END IF
             echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
             
         } #END IF
+        echo'<pre>';print_r( $this->VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
+        
         die(__FILE__ .' '. __LINE__ );
 
 
@@ -130,7 +133,7 @@ class mod_rokajaxsearchInstallerScript
             {
                 # Выдать сообщение об ошибке и вернуть false
                 # Throw some error message and return false
-                JApplicationCms::getInstance('administrator')->enqueueMessage('Error msg' , 'error' ) ;
+                $this->app->enqueueMessage('Error msg' , 'error' ) ;
 
                 return false;
             }
@@ -182,12 +185,12 @@ class mod_rokajaxsearchInstallerScript
      */
     protected function checkVersionGnz11($parent){
         $this->minimum_version_gnz11 = (string)$parent->get('manifest')->version_gnz11 ;
-        $VersionGnz11 = $this->getVersionGnz11();
+        $this->VersionGnz11 = $this->getVersionGnz11();
 
-        if ( version_compare( $VersionGnz11 , $this->minimum_version_gnz11  , '<') )
+        if ( version_compare( $this->VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
             $ErrorMsg = 'Необходимая минимальная версия библиотеи GNZ11 <b>'.$this->minimum_version_gnz11.'</b>' . PHP_EOL;
-            $ErrorMsg .= 'Установленная версия <b>' . $VersionGnz11.'</b>' ;
+            $ErrorMsg .= 'Установленная версия <b>' . $this->VersionGnz11.'</b>' ;
 
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
