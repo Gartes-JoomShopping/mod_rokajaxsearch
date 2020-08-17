@@ -2,8 +2,10 @@
 
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Installer\InstallerScript;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 // No direct access to this file
 defined('_JEXEC') or die;
@@ -276,13 +278,13 @@ class mod_rokajaxsearchInstallerScript
     {
         if (!is_string($url))
         {
-            return \Joomla\CMS\Language\Text::_('NNEM_ERROR_NO_VALID_URL');
+            return Text::_('NNEM_ERROR_NO_VALID_URL');
         }
 
-        $config = Factory::getApplication()->get('configValue');
+
 
         $url = 'http://' . str_replace('http://', '', $url);
-        $target = $config->get('tmp_path') . '/' . uniqid($id) . '.zip';
+        $target = Factory::getApplication()->get('tmp_path') . '/' . uniqid($id) . '.zip';
 
         jimport('joomla.filesystem.file');
         Factory::getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
@@ -336,11 +338,11 @@ class mod_rokajaxsearchInstallerScript
 
         if (empty($content))
         {
-            return JText::_('NNEM_ERROR_CANNOT_DOWNLOAD_FILE');
+            return Text::_('NNEM_ERROR_CANNOT_DOWNLOAD_FILE');
         }
 
         // Write buffer to file
-        JFile::write($target, $content);
+        File::write($target, $content);
 
         jimport('joomla.installer.installer');
         jimport('joomla.installer.helper');
