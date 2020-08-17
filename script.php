@@ -116,13 +116,13 @@ class mod_rokajaxsearchInstallerScript
         } #END IF
         echo'<pre>';print_r( $this->VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
         
-        die(__FILE__ .' '. __LINE__ );
+
 
 
         
         # Отменить, если устанавливаемый модуль не новее, чем текущая установленная версия
         # Abort if the module being installed is not newer than the currently installed version
-        if (strtolower($typeExt) === 'update')
+      /*  if (strtolower($typeExt) === 'update')
         {
             $manifest   = $this->getItemArray( Factory::getDbo()->quote($this->extension));
             $oldRelease = $manifest['version'];
@@ -154,7 +154,7 @@ class mod_rokajaxsearchInstallerScript
                     # $this->updateToVersionTwo();
                 }
             }
-        }
+        }*/
         JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
         \GNZ11\Extensions\ScriptFile::updateProcedure($typeExt, $parent);
     }
