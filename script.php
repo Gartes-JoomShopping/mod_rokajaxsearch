@@ -102,8 +102,9 @@ class mod_rokajaxsearchInstallerScript
 
         # Проверить версию Gnz11
         if( !$this->checkVersionGnz11( $parent ) ) {
-            $this->InstalGnz11();
-            return false;
+            $result = $this->InstalGnz11($parent);
+            echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
+            
         } #END IF
         die(__FILE__ .' '. __LINE__ );
 
@@ -189,10 +190,15 @@ class mod_rokajaxsearchInstallerScript
         return true ;
     }
 
-    protected function InstalGnz11(){
+    protected function InstalGnz11($parent){
 //        $this->installDownload('Gnz11', self::Gnz11InstallUrl);
         JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
-        \GNZ11\Extensions\ScriptFile::installDownload('Gnz11', self::Gnz11InstallUrl) ;
+        $result = \GNZ11\Extensions\ScriptFile::installDownload('Gnz11', self::Gnz11InstallUrl) ;
+        if( $result )
+        {
+            return $this->checkVersionGnz11( $parent );
+        }#END IF
+        return false ;
     }
 
     /**
