@@ -194,6 +194,11 @@ class mod_rokajaxsearchInstallerScript
 //        $this->installDownload('Gnz11', self::Gnz11InstallUrl);
         JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
         $result = \GNZ11\Extensions\ScriptFile::installDownload('Gnz11', self::Gnz11InstallUrl) ;
+
+        echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
+        die(__FILE__ .' '. __LINE__ );
+
+
         if( $result )
         {
             return $this->checkVersionGnz11( $parent );
