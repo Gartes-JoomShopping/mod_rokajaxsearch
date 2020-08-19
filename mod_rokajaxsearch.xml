@@ -19,7 +19,6 @@
             <file driver="mysql" charset="utf8">sql/install.mysql.sql</file>
         </sql>
     </install>
-
     <update>
         <schemas>
             <schemapath type="mysql">sql/updates/mysql</schemapath>
@@ -79,6 +78,19 @@
                 	showon=""
                 	hint=""
                 	filter="raw" />
+                	
+                <field name="path_css_file"
+                	type="text"
+                	default=""
+                	class="path_css_file "
+                	readonly=""
+                	required="1"
+                	label="MOD_ROKAJAXSEARCH_PATH_CSS_FILE"
+                	description="MOD_ROKAJAXSEARCH_PATH_CSS_FILE_DESC"
+                	showon=""
+                	hint=""
+                	filter="raw" />
+                	
                 	
                 	    
 

@@ -69,9 +69,13 @@ class modRokajaxsearchHelper {
             ]
         ];
 		$doc->addScriptOptions('mod_rokajaxsearch' , $JSParams ) ;
-		
+
+
         $helper = new modRokajaxsearchHelper();
-		$css = $helper->getCSSPath('rokajaxsearch.css', 'mod_rokajaxsearch');
+
+        $css = $helper->getCSSPath('rokajaxsearch.css', 'mod_rokajaxsearch');
+
+
 
 
 		$iebrowser = $helper->getBrowser();
@@ -152,43 +156,6 @@ class modRokajaxsearchHelper {
 
 
 
-		/*$ras_init = "window.addEvent((window.webkit) ? 'load' : 'domready', function() {
-				window.rokajaxsearch = new RokAjaxSearch({
-					'results': '".JText::_('RESULTS')."',
-					'close': '',
-					'websearch': ".$websearch.",
-					'blogsearch': ".$blogsearch.",
-					'imagesearch': ".$imagesearch.",
-					'videosearch': ".$videosearch.",
-					'imagesize': '".$params->get('image_size', 'MEDIUM')."',
-					'safesearch': '".$params->get('safesearch', 'MODERATE')."',
-					'search': '".JText::_('SEARCH')."',
-					'readmore': '".JText::_('READMORE')."',
-					'noresults': '".JText::_('NORESULTS')."',
-					'advsearch': '".JText::_('ADVSEARCH')."',
-					'page': '".JText::_('PAGE')."',
-					'page_of': '".JText::_('PAGE_OF')."',
-					'searchlink': '".JRoute::_(JURI::Base().htmlentities($params->get('search_page')), true)."',
-					'advsearchlink': '".JRoute::_(JURI::Base().htmlentities($params->get('adv_search_page')), true)."',
-					'uribase': '".JRoute::_(JURI::Base(), true)."',
-					'limit': '".$params->get('limit', '10')."',
-					'perpage': '".$params->get('perpage', '3')."',
-					'ordering': '".$params->get('ordering', 'newest')."',
-					'phrase': '".$params->get('searchphrase', 'any')."',
-					'hidedivs': '".$params->get('hide_divs', '')."',
-					'includelink': ".$params->get('include_link', 1).",
-					'viewall': '".JText::_('VIEWALL')."',
-					'estimated': '".JText::_('ESTIMATED')."',
-					'showestimated': ".$params->get('show_estimated', 1).",
-					'showpagination': ".$params->get('show_pagination', 1).",
-					'showcategory': ".$params->get('include_category', 1).",
-					'showreadmore': ".$params->get('show_readmore', 1).",
-					'showdescription': ".$params->get('show_description', 1)."
-				});
-			});";
-		$doc->addScriptDeclaration($ras_init);*/
-
-
 		/* Google API */
 		if ($params->get('websearch', 0) == 1 && $params->get('websearch_api') != '') {
 			$doc->addScript("http://www.google.com/jsapi?key=".$params->get('websearch_api'));
@@ -196,19 +163,34 @@ class modRokajaxsearchHelper {
 		}
 	}
 
-    public static function getCSSPath($cssfile, $module) {
+    /**
+     *
+     * @param $cssfile
+     * @param $module
+     * @return false|string
+     * @throws Exception
+     * @since 3.9
+     * @auhtor Gartes | sad.net79@gmail.com | Skype : agroparknew | Telegram : @gartes
+     * @date 19.08.2020 02:44
+     *
+     */
+    public static function getCSSPath($cssfile, $module )
+    {
 
-		$tPath = 'templates/'.JFactory::getApplication()->getTemplate().'/css/' . $cssfile . '-disabled';
-		$bPath = 'modules/'.$module.'/css/' . $cssfile;
+        $tPath = 'templates/' . JFactory::getApplication()->getTemplate() . '/css/' . $cssfile . '-disabled';
+        $bPath = 'modules/' . $module . '/css/' . $cssfile;
 
-		// If the template is asking for it,
-		// don't include default rokajaxsearch css
-		if (!file_exists(JPATH_BASE.'/'.$tPath)) {
-			return JURI::root(true) .'/'.$bPath;
-		} else {
-			return false;
-		}
-	}
+        // If the template is asking for it,
+        // don't include default rokajaxsearch css
+        if( !file_exists(JPATH_BASE . '/' . $tPath) )
+        {
+            return JURI::root(true) . '/' . $bPath;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 	public static function getBrowser()
 	{

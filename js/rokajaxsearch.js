@@ -419,7 +419,7 @@ var RokAjaxSearch = new Class({
                                     'searchphrase' : self.options.phrase,
                                     'ordering' : self.options.ordering,
                                     'limit' : self.options.limit,
-                                    'searchword' : text.replace(/\"/g, ''),
+                                    'searchword' : text/*.replace(/\"/g, '')*/,
                                     'tmpl': 'component',
                                     'r' : Date.now()
                                 }]);
@@ -613,16 +613,19 @@ var RokAjaxSearch = new Class({
                         document.id(div).setStyle('visibility', 'visible');
                     });
 
-                } else
-                    {
+                }
+                else{
 
                     if (self.type === 'local') {
+
                         var exact = this.value.split('"');
                         if (exact.length >= 3) {
                             self.options.phrase = 'exact';
                         } else {
                             self.options.phrase = self.searchphrase;
                         }
+
+
                         var request = new Request({
                             url: uri,
                             method: 'get',
@@ -631,8 +634,8 @@ var RokAjaxSearch = new Class({
                                 input.addClass('loading');
                             }.bind(this),
                             onSuccess: function(returns, b, c) {
-                                var event = new CustomEvent('onKeyUpSuccess', { 'detail': returns });
                                 // Вызываем событие
+                                var event = new CustomEvent('onKeyUpSuccess', { 'detail': returns });
                                 document.dispatchEvent(event);
 
                                 var results = new Element('div', {'styles': {'display': 'none'}}).set('html', returns);
@@ -701,7 +704,10 @@ var RokAjaxSearch = new Class({
                             }]);
                         } else {
                             console.log( self )
-                            console.trace()
+                            console.log( this.value )
+                            console.trace();
+                            var valUrlCode = encodeURIComponent( this.value ) ;
+                            console.log( valUrlCode )
                             self.timer = request.get.delay(600, request, [{
                                 'type': 'raw',
                                 'option' : 'com_search',
@@ -709,7 +715,7 @@ var RokAjaxSearch = new Class({
                                 'searchphrase' : self.options.phrase,
                                 'ordering' : self.options.ordering,
                                 'limit' : self.options.limit,
-                                'searchword' : this.value.replace(/\"/g, ''),
+                                'searchword' :    this.value/*.replace(/\"/g, '\"')*/,
                                 'tmpl': 'component',
                                 'r' : Date.now()
                             }]);

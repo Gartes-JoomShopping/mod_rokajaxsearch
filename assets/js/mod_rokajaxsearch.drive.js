@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 window.modRokajaxsearchDrive = function () {
     var $ = jQuery ;
     var self = this ;

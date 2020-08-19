@@ -1,6 +1,7 @@
 <?php
 
-
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Installer\InstallerScript;
@@ -11,11 +12,24 @@ use Joomla\CMS\Language\Text;
 defined('_JEXEC') or die;
 
 /**
- * Script file of HelloWorld module
- *  @since 3.9
+ * Class mod_rokajaxsearchInstallerScript
+ * @since 3.9
  */
 class mod_rokajaxsearchInstallerScript
 {
+    /**
+     *
+     * @since 3.9
+     * @auhtor Gartes
+     * @date 17.08.2020 16:31
+     *
+     */
+    public function aaa(){}
+
+    /**
+     * @var string Url архива библиотеки GNZ11
+     * @since 3.9
+     */
     const Gnz11InstallUrl = 'https://github.com/gartes/GNZ11/archive/master.zip';
     /**
      * Минимальная требуемая версия библиотеки GNZ11
@@ -24,10 +38,14 @@ class mod_rokajaxsearchInstallerScript
      */
     protected $minimum_version_gnz11;
     /**
-     * @var \Joomla\CMS\Application\CMSApplication|null
+     * @var \Joomla\CMS\Application\CMSApplication
      * @since 3.9
      */
     private $app;
+    /**
+     * @var string текущая версия Gnz11
+     * @since 3.9
+     */
     protected $VersionGnz11;
 
     /**
@@ -62,7 +80,7 @@ class mod_rokajaxsearchInstallerScript
      * $parent is the class calling this method
      *
      * @return void
-     *  @since 3.9
+     * @since 3.9
      */
     function uninstall($parent)
     {
@@ -94,6 +112,7 @@ class mod_rokajaxsearchInstallerScript
      * $type is the type of change (install, update or discover_install)
      *
      * @return false
+     * @throws Exception
      * @since 3.9
      */
     function preflight($typeExt, $parent)
@@ -102,58 +121,14 @@ class mod_rokajaxsearchInstallerScript
         $this->release = (string)$parent->get('manifest')->version;
 
         # Проверить версию Gnz11
-        if( !$this->checkVersionGnz11( $parent ) ) {
-            $result = $this->InstalGnz11($parent);
-            if( !$result )
-            {
-
-                $this->app->enqueueMessage('Не удалось скачать и установить библиатеку GNZ11' , 'error' ) ;
+        if( !$this->checkVersionGnz11( $parent , true ) ) {
+            $result = $this->InstallGnz11($parent);
+            if( !$result ) {
                 return false;
-
-            }#END IF
-            echo'<pre>';print_r( $result );echo'</pre>'.__FILE__.' '.__LINE__;
-            
+            } #END IF
         } #END IF
 
 
-
-        echo'<pre>';print_r( $this->VersionGnz11 );echo'</pre>'.__FILE__.' '.__LINE__;
-
-        # Отменить, если устанавливаемый модуль не новее, чем текущая установленная версия
-        # Abort if the module being installed is not newer than the currently installed version
-      /*  if (strtolower($typeExt) === 'update')
-        {
-            $manifest   = $this->getItemArray( Factory::getDbo()->quote($this->extension));
-            $oldRelease = $manifest['version'];
-
-            # Кто-то пытается установить более раннюю версию, чем установлена сейчас
-            # Someone is trying to install a lower version than is currently installed
-            if (version_compare($this->release, $oldRelease, '<'))
-            {
-                # Выдать сообщение об ошибке и вернуть false
-                # Throw some error message and return false
-                $this->app->enqueueMessage('Error msg' , 'error' ) ;
-
-                return false;
-            }
-
-            # Устанавливаемая версия выше той, которая установлена в настоящее время
-            # The version being installed is higher than what is currently installed
-            if (version_compare($oldRelease, $this->release, '<'))
-            {
-                # Здесь вы можете выполнить функцию
-                # You can execute a function here
-
-                # Если вы хотите сравнить конкретную версию.
-                # If you want to compare a specific version.
-                if (version_compare($oldRelease, '2.0.0', '<='))
-                {
-                    # Функция обновления для версии 2.0.0
-                    # Update function for version 2.0.0
-                    # $this->updateToVersionTwo();
-                }
-            }
-        }*/
         JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
         \GNZ11\Extensions\ScriptFile::updateProcedure($typeExt, $parent);
     }
@@ -168,7 +143,7 @@ class mod_rokajaxsearchInstallerScript
      * $type is the type of change (install, update or discover_install)
      *
      * @return void
-     *  @since 3.9
+     * @since 3.9
      */
     function postflight($type, $parent)
     {
@@ -178,39 +153,55 @@ class mod_rokajaxsearchInstallerScript
     /**
      * Проверить версию библиотеки GNZ11
      * @param $parent
+     * @param bool $mute - Скрывать сообщения
      * @return bool
-     * @throws Exception
      * @since 3.9
      */
-    protected function checkVersionGnz11($parent){
+    protected function checkVersionGnz11($parent , $mute = false ){
         $this->minimum_version_gnz11 = (string)$parent->get('manifest')->version_gnz11 ;
         $this->VersionGnz11 = $this->getVersionGnz11();
 
         if ( version_compare( $this->VersionGnz11 , $this->minimum_version_gnz11  , '<') )
         {
-            $ErrorMsg = 'Необходимая минимальная версия библиотеи GNZ11 <b>'.$this->minimum_version_gnz11.'</b>' . PHP_EOL;
-            $ErrorMsg .= 'Установленная версия <b>' . $this->VersionGnz11.'</b>' ;
+            if( !$mute )
+            {
+                $ErrorMsg = 'Необходимая минимальная версия библиотеи GNZ11 <b>'.$this->minimum_version_gnz11.'</b>' . PHP_EOL;
+                $ErrorMsg .= 'Установленная версия <b>' . $this->VersionGnz11.'</b>' ;
+            }#END IF
+
 
             # Выдать сообщение об ошибке и вернуть false
             # Throw some error message and return false
             $this->app->enqueueMessage( $ErrorMsg , 'error' ) ;
             return false;
         }
-        $mes = 'Версия версия библиотеки GNZ11 ('.$this->VersionGnz11.') <b>В актуальном состояни</b></b>';
-        $this->app->enqueueMessage( $mes   ) ;
+        if( !$mute )
+        {
+            $mes = 'Версия версия библиотеки GNZ11 ('.$this->VersionGnz11.') <b>В актуальном состояни</b></b>';
+            $this->app->enqueueMessage( $mes   ) ;
+        }
+
         return true ;
     }
 
-    protected function InstalGnz11($parent){
+    /**
+     * Установить библиотеку GNZ11
+     * @param $parent
+     * @return bool     true в случае если установка удалась !
+     * @throws Exception
+     * @since 3.9
+     */
+    protected function InstallGnz11($parent){
+        # Скачать и установить расширение
         $result = $this->installDownload('Gnz11', self::Gnz11InstallUrl);
-//        JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
-//        $result = \GNZ11\Extensions\ScriptFile::installDownload('Gnz11', self::Gnz11InstallUrl) ;
-
-
         if( $result )
         {
-            return $this->checkVersionGnz11( $parent );
+            $checkRes = $this->checkVersionGnz11( $parent , true  );
+            $mes = 'Библиотека GNZ11 обновлена до актуальной версии <b>('.$this->VersionGnz11.')</b> ';
+            $this->app->enqueueMessage( $mes   ) ;
+            return $checkRes ;
         }#END IF
+        $this->app->enqueueMessage('Не удалось скачать и установить библиотеку GNZ11' , 'error' ) ;
         return false ;
     }
 
@@ -245,7 +236,7 @@ class mod_rokajaxsearchInstallerScript
     }
 
     /**
-     * Определяет, загружено ли указанное расширение.
+     * Определяет, загружено ли указанное расширение PHP.
      * @link https://php.net/manual/en/function.extension-loaded.php
      * @param   array  $extensions  extensions
      *
@@ -291,6 +282,14 @@ class mod_rokajaxsearchInstallerScript
         } 
     }
 
+    /**
+     * Скачать и установить расширение
+     * @param string $id    - имя разширения
+     * @param string $url   - Url для скачивания
+     * @return bool|string
+     * @throws Exception
+     * @since 3.9
+     */
     private function installDownload(string $id, string $url)
     {
         if( !self::checkTmpDir() )
@@ -298,33 +297,30 @@ class mod_rokajaxsearchInstallerScript
             return false ;
         }#END IF
 
-        $tmp_path = \Joomla\CMS\Factory::getApplication()->get('tmp_path') ;
+        $tmp_path = Factory::getApplication()->get('tmp_path') ;
 
         if (!is_string($url))
         {
-            return \Joomla\CMS\Language\Text::_('NNEM_ERROR_NO_VALID_URL');
+            return Text::_('NNEM_ERROR_NO_VALID_URL');
         }
         $target = $tmp_path . '/' . uniqid($id) . '.zip';
 
         jimport('joomla.filesystem.file');
-        \Joomla\CMS\Factory::getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
+        Factory::getLanguage()->load('com_installer', JPATH_ADMINISTRATOR);
 
         // Download the package at the URL given.
-        $p_file = \Joomla\CMS\Installer\InstallerHelper::downloadPackage($url);
-
-
-
+        $p_file = InstallerHelper::downloadPackage($url);
 
         // Was the package downloaded?
         if (!$p_file)
         {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage( 'Не удалось скачать пакет установки' , 'error');
+            Factory::getApplication()->enqueueMessage( 'Не удалось скачать пакет установки' , 'error');
             return false;
         }
         // Распакуй скачанный файл пакета.
-        $package = \Joomla\CMS\Installer\InstallerHelper::unpack($tmp_path . '/' . $p_file, true);
+        $package = InstallerHelper::unpack($tmp_path . '/' . $p_file, true);
         // Get an installer instance.
-        $installer = new \Joomla\CMS\Installer\Installer();
+        $installer = new Installer();
         /*
          * Проверьте наличие основного пакета Joomla.
          * Для этого нам нужно указать исходный путь для поиска манифеста (тот же первый шаг, что и JInstaller :: install ())
@@ -339,30 +335,14 @@ class mod_rokajaxsearchInstallerScript
             {
                 # Если манифест не найден в источнике, это может быть пакет Joomla; проверьте каталог пакета для манифеста Joomla
                 # If a manifest isn't found at the source, this may be a Joomla package; check the package directory for the Joomla manifest
-                \Joomla\CMS\Factory::getApplication()->enqueueMessage('Ошибка! Не удалось найти файл ианифест' , 'warning' );
+                $this->app->enqueueMessage('Ошибка! Не удалось найти файл ианифест' , 'warning' );
                 return false;
-
-                /*if (file_exists($package['dir'] . '/administrator/manifests/files/joomla.xml'))
-                {
-                    // We have a Joomla package
-                    if (in_array($installType, array('upload', 'url')))
-                    {
-                        JInstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
-                    }
-
-                    $app->enqueueMessage(
-                        JText::sprintf('COM_INSTALLER_UNABLE_TO_INSTALL_JOOMLA_PACKAGE', JRoute::_('index.php?option=com_joomlaupdate')),
-                        'warning'
-                    );
-
-                    return false;
-                }*/
             }
         }
         if (!$package || !$package['type'])
         {
-            \Joomla\CMS\Installer\InstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage( 'Не удалось найти пакет установки' , 'error');
+            InstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
+            $this->app->enqueueMessage( 'Не удалось найти пакет установки' , 'error');
             return false;
         }
 
@@ -370,46 +350,50 @@ class mod_rokajaxsearchInstallerScript
         if (!$installer->install($package['dir']))
         {
             // There was an error installing the package.
-            $msg = \Joomla\CMS\Language\Text::sprintf('COM_INSTALLER_INSTALL_ERROR', \Joomla\CMS\Language\Text::_('COM_INSTALLER_TYPE_TYPE_' . strtoupper($package['type'])));
+            $msg = Text::sprintf('COM_INSTALLER_INSTALL_ERROR', Text::_('COM_INSTALLER_TYPE_TYPE_' . strtoupper($package['type'])));
             $result = false;
             $msgType = 'error';
         }
         else
         {
             // Package installed successfully.
-            $msg = \Joomla\CMS\Language\Text::sprintf('COM_INSTALLER_INSTALL_SUCCESS', \Joomla\CMS\Language\Text::_('COM_INSTALLER_TYPE_TYPE_' . strtoupper($package['type'])));
+            $msg = Text::sprintf('COM_INSTALLER_INSTALL_SUCCESS', Text::_('COM_INSTALLER_TYPE_TYPE_' . strtoupper($package['type'])));
             $result = true;
             $msgType = 'message';
         }
-        \Joomla\CMS\Factory::getApplication()->enqueueMessage( $msg ,  $msgType );
+        Factory::getApplication()->enqueueMessage( $msg ,  $msgType );
+
         // Cleanup the install files.
         if (!is_file($package['packagefile']))
         {
             $package['packagefile'] = $tmp_path . '/' . $package['packagefile'];
         }
-
-        \Joomla\CMS\Installer\InstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
-
+        # Очистить временные файлы устанавливаемова пакета
+        InstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
 
         return $result ;
     }
+
     /**
      * Проверка директории TMP
+     * Проверить что директоря находится в корне сайта
      * @return bool
      * @throws \Exception
      * @since 3.9
      */
-    public static function checkTmpDir(){
-        $tmp_path = \Joomla\CMS\Factory::getApplication()->get('tmp_path');
+    private static function checkTmpDir(){
+        $tmp_path = Factory::getApplication()->get('tmp_path');
         $tmp_pathLogic = JPATH_ROOT . '/tmp'  ;
         if( \Joomla\CMS\Filesystem\Folder::exists( $tmp_pathLogic ) && $tmp_path != $tmp_pathLogic )
         {
             $mes = 'В настройках Joomla путь к директории TMP ведет не к той директории которая в корне сайта.' ;
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage($mes , 'warning');
+            Factory::getApplication()->enqueueMessage($mes , 'warning');
             return true ;
         }#END IF
         return true ;
     }
+
+
 
 
 }
