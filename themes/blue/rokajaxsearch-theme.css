@@ -1,12 +1,4 @@
 
-#roksearch_search_str {
-    /* background: #ffffff url("search-icon.png") no-repeat scroll 98% 50%; */
-    color: #000000;
-    margin: 4px 0 0;
-    padding: 0 10px;
-    vertical-align: middle;
-    width: 428px;
-}
 #roksearch_search_str.loading {
     background-color: #eff8fa;
     border: 1px solid #ff7800;

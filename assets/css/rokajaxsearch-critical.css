@@ -1,0 +1,223 @@
+/***********************************************************************************************************************
+ * ╔═══╗ ╔══╗ ╔═══╗ ╔════╗ ╔═══╗ ╔══╗  ╔╗╔╗╔╗ ╔═══╗ ╔══╗   ╔══╗  ╔═══╗ ╔╗╔╗ ╔═══╗ ╔╗   ╔══╗ ╔═══╗ ╔╗  ╔╗ ╔═══╗ ╔╗ ╔╗ ╔════╗
+ * ║╔══╝ ║╔╗║ ║╔═╗║ ╚═╗╔═╝ ║╔══╝ ║╔═╝  ║║║║║║ ║╔══╝ ║╔╗║   ║╔╗╚╗ ║╔══╝ ║║║║ ║╔══╝ ║║   ║╔╗║ ║╔═╗║ ║║  ║║ ║╔══╝ ║╚═╝║ ╚═╗╔═╝
+ * ║║╔═╗ ║╚╝║ ║╚═╝║   ║║   ║╚══╗ ║╚═╗  ║║║║║║ ║╚══╗ ║╚╝╚╗  ║║╚╗║ ║╚══╗ ║║║║ ║╚══╗ ║║   ║║║║ ║╚═╝║ ║╚╗╔╝║ ║╚══╗ ║╔╗ ║   ║║
+ * ║║╚╗║ ║╔╗║ ║╔╗╔╝   ║║   ║╔══╝ ╚═╗║  ║║║║║║ ║╔══╝ ║╔═╗║  ║║─║║ ║╔══╝ ║╚╝║ ║╔══╝ ║║   ║║║║ ║╔══╝ ║╔╗╔╗║ ║╔══╝ ║║╚╗║   ║║
+ * ║╚═╝║ ║║║║ ║║║║    ║║   ║╚══╗ ╔═╝║  ║╚╝╚╝║ ║╚══╗ ║╚═╝║  ║╚═╝║ ║╚══╗ ╚╗╔╝ ║╚══╗ ║╚═╗ ║╚╝║ ║║    ║║╚╝║║ ║╚══╗ ║║ ║║   ║║
+ * ╚═══╝ ╚╝╚╝ ╚╝╚╝    ╚╝   ╚═══╝ ╚══╝  ╚═╝╚═╝ ╚═══╝ ╚═══╝  ╚═══╝ ╚═══╝  ╚╝  ╚═══╝ ╚══╝ ╚══╝ ╚╝    ╚╝  ╚╝ ╚═══╝ ╚╝ ╚╝   ╚╝
+ *----------------------------------------------------------------------------------------------------------------------
+ * @author Gartes | sad.net79@gmail.com | Skype : agroparknew | Telegram : @gartes
+ * @date 28.08.2020 02:07
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later;
+ **********************************************************************************************************************/
+
+.rokajaxsearch {
+    position: relative;
+}
+input{
+    color: aquamarine;
+}
+#roksearch_search_str {
+    box-sizing: border-box;
+    border: 1px solid #ff7800;
+    height: 44px;
+    margin: 0 auto;
+    padding: 0 55px 0 10px;
+    vertical-align: middle;
+    width: 100%;
+    font-size: 100%;
+    /* background: url(/images/my-img/search.svg); */
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: 98% 50%;
+}
+#roksearch_search_str::placeholder {
+    color: #aba8a8;
+}
+#roksearch_search_str::-webkit-input-placeholder {color: #aba8a8;}
+#roksearch_search_str::-moz-placeholder { color: #aba8a8; } /* firefox 19+ */
+#roksearch_search_str:-ms-input-placeholder { color: #aba8a8; } /* ie */
+#roksearch_search_str:-moz-placeholder { color: #aba8a8; }
+
+#rokajaxsearch-icon {
+    position: absolute;
+    top: 2px;
+    right: 1px;
+    /* width: 44px; */
+    cursor: pointer;
+}
+.search-form__icon {
+    position: relative;
+    display: none;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: #fff;
+}
+.search-form__icon svg {
+    fill: #ff7700;
+}
+.search-form__icon:hover svg {
+    fill: #df182b;
+}
+@media (min-width: 768px)
+{
+    .search-form__icon {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+    }
+}
+
+.search-form__icon:before {
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    height: 30px;
+    border-left: 2px solid #e9e9e9;
+    content: "";
+}
+ 
+@media (min-width: 768px) {
+     
+
+    button.search-form__microphone.speechRecognition:before {
+        /* border-left: 2px solid #e9e9e9; */
+    }
+
+    button.search-form__microphone.speechRecognition svg {
+        fill: #0052b9;
+        transition: all .3s;
+    }
+
+    button.search-form__microphone.speechRecognition:hover svg {
+        fill: #ff7878;
+    }
+    .search-form__microphone {
+
+    }
+}
+
+
+
+
+
+
+
+#info {
+    position: absolute;
+    width: 100%;
+    display: none;
+}
+#info p{
+    text-align: center;
+    margin: 0;
+    width: 100%;
+}
+
+.search-form__microphone{
+    display: none;
+}
+@media (min-width: 768px)
+{
+    /**============== Recognition ============== */
+.search-form__microphone {
+    position: relative;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: #fff;
+    background: transparent;
+    cursor: pointer;
+}
+.search-form__microphone:before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    height: 30px;
+    border-left: 1px solid #e9e9e9;
+    content: "";
+}
+button.search-form__microphone.speechRecognition {
+    position: absolute;
+    top: 2px;
+    right: 42px;
+}
+
+.search-form__microphone svg {
+    fill: #3e77aa;
+}
+.search-form__microphone:hover svg {
+    fill: #ff7878;
+}
+    .search-form__microphone.speechRecognition {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+    }
+    #info{
+        display: block; 
+    }
+
+}
+
+.search-form__clear[_ngcontent-c9] {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    position: absolute;
+    top: 2px;
+    right: 83px;
+    z-index: 10000;
+}

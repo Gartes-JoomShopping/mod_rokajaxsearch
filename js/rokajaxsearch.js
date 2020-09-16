@@ -48,7 +48,7 @@ var RokAjaxSearch = new Class({
 
         var last = document.id(document.body).getLast();
 
-        if (last && last.get('id') == 'roksearch_results'){
+        if (last && last.get('id') === 'roksearch_results'){
             this.results = last;
         } else {
             this.results = document.id('roksearch_results').setStyles({
@@ -99,7 +99,6 @@ var RokAjaxSearch = new Class({
         this.addEvents();
         this.keyEvents();
     },
-
     getTop: function(input) {
         input = document.id(input ? input : this.inputBox[0]);
         if (!input) { return; }
@@ -116,7 +115,6 @@ var RokAjaxSearch = new Class({
 
         return top;
     },
-
     getLeft: function(input) {
         input = document.id(input ? input : this.inputBox[0]);
         if (!input) { return; }
@@ -134,141 +132,6 @@ var RokAjaxSearch = new Class({
         return left;
     },
 
-    googleStart: function() {
-        if (!this.inputBox.hasClass('loading')) this.inputBox.addClass('loading');
-        this.google.execute(this.inputBox.value);
-    },
-
-    googleComplete: function() {
-        var results = this.google.results;
-        var tmp = document.id('rokajaxsearch_tmp');
-//		console.log(results);
-        var ol = new Element('ol', {'class': 'list'}).inject(tmp);
-
-        if (this.type == 'web') {
-            results.each(function(res) {
-                var li = new Element('li');
-                var title_link = new Element('a', {'href': res.unescapedUrl}).set('target', '_blank').set('html', res.title);
-                var title = new Element('h4').inject(li).adopt(title_link);
-
-                var category = new Element('p').set('html', '<small><a href="'+res.url+'" target="_blank">'+res.visibleUrl+'</a></small>').inject(li);
-
-                var content = res.content;
-                content = content.replace('<b>', '<span class="highlight">').replace('</b>', '</span>');
-                var desc = new Element('div', {'class': 'description'}).set('html', content).inject(li);
-
-                li.inject(ol);
-            });
-        } else if (this.type == 'blog') {
-            results.each(function(res) {
-                var li = new Element('li');
-                var title_link = new Element('a', {'href': res.postUrl}).set('target', '_blank').set('html', res.title);
-                var title = new Element('h4').inject(li).adopt(title_link);
-
-                var category = new Element('p').set('html', '<small>by '+res.author+' - <a href="'+res.blogUrl+'" target="_blank">'+res.blogUrl+'</a></small>').inject(li);
-
-                var content = res.content;
-                content = content.replace('<b>', '<span class="highlight">').replace('</b>', '</span>');
-                var desc = new Element('div', {'class': 'description'}).set('html', content).inject(li);
-
-                li.inject(ol);
-            });
-        } else if (this.type == 'images') {
-            results.each(function(res) {
-                var li = new Element('li');
-                var title_link = new Element('a', {'href': res.url}).set('target', '_blank').set('html', res.title);
-                var title = new Element('h4').inject(li).adopt(title_link);
-
-                var category = new Element('p').set('html', '<small><a href="'+res.originalContextUrl+'" target="_blank">'+res.visibleUrl+'</a></small>').inject(li);
-
-                var content = res.content;
-                content = content.replace('<b>', '<span class="highlight">').replace('</b>', '</span>');
-                var desc = new Element('div', {'class': 'description'}).set('html', content).inject(li);
-
-                var thumb_container = new Element('div', {'class': 'google-thumb-image loading'}).inject(desc);
-                thumb_container.setStyles({
-                    'width': res.tbWidth.toInt(),
-                    'height': res.tbHeight.toInt()
-                });
-
-                var a = new Element('a', {'href': res.url, 'target': '_blank'}).inject(thumb_container);
-                var img = new Element('image', {
-                    width: res.tbWidth.toInt(),
-                    height: res.tbHeight.toInt(),
-                    src: res.tbUrl
-                }).inject(a);
-
-                li.inject(ol);
-            });
-        } else if (this.type == 'videos') {
-            results.each(function(res) {
-                var li = new Element('li');
-                var title_link = new Element('a', {'href': res.playUrl}).set('target', '_blank').set('html', res.title);
-                var title = new Element('h4').inject(li).adopt(title_link);
-
-                var seconds = res.duration.toInt();
-                var duration = '00:' + ((seconds < 10) ? '0' + seconds : seconds);
-
-                if (seconds >= 60) {
-                    var m = seconds / 60;
-                    var s = seconds - (m * 60);
-                    m = m.toInt(); s = s.toInt();
-                    if (m < 10) m = '0' + m;
-                    if (s < 10) s = '0' + s;
-                    duration = m + ':' + s;
-
-                    if (m >= 60) {
-                        var h = m / 60;
-                        h = h.toInt();
-                        if (h < 10) h = '0' + h;
-                        duration = h + duration;
-                    }
-                }
-
-                var category = new Element('p').set('html', '<span class="'+res.videoType.toLowerCase()+'">Rating: '+(parseFloat(res.rating)).toFixed(2)+' | Duration: '+duration+' <small>'+res.videoType+'</small></span>').inject(li);
-
-                var desc = new Element('div', {'class': 'description'}).set('html', '').inject(li);
-
-                var thumb_container = new Element('div', {'class': 'google-thumb-image loading'}).inject(desc);
-                thumb_container.setStyles({
-                    'width': res.tbWidth.toInt(),
-                    'height': res.tbHeight.toInt(),
-                    'text-align': 'center'
-                });
-
-                var a = new Element('a', {'href': res.url, 'target': '_blank'}).inject(thumb_container);
-                var img = new Element('image', {
-                    src: res.tbUrl,
-                    width: res.tbWidth.toInt(),
-                    height: res.tbHeight.toInt()
-                }).inject(a);
-
-                li.inject(ol);
-            });
-        }
-
-        this.results.empty().removeClass('roksearch_results').setStyle('visibility', 'visible');
-
-        this.arrowleft = null;
-        this.arrowright = null;
-        this.selectedEl = -1;
-        this.els = [];
-
-        this.outputTableless();
-
-        tmp.empty().setStyle('visibility','visible');
-        this.inputBox.removeClass('loading');
-
-
-        var pos = this.inputBox.getCoordinates(), self = this;
-        this.results.setStyles({
-            'top': pos.top + pos.height,
-            'left': self.getLeft()
-        });
-        this.fx.start('opacity', 1);
-        this.fireEvent('loaded');
-        //console.log(this.google.cursor);*/
-    },
 
     _getUrlink : function ( self ){
 
@@ -286,6 +149,7 @@ var RokAjaxSearch = new Class({
 
         this.inputBox.addEvents({
             paste: function(event) {
+                return
                 var input = this;
                 var uri = self.options.uribase ;
                 var text ;
@@ -325,7 +189,6 @@ var RokAjaxSearch = new Class({
 
                     } else
                     {
-
                         if (self.type === 'local') {
                             var exact = text.split('"');
                             if (exact.length >= 3) {
@@ -333,6 +196,20 @@ var RokAjaxSearch = new Class({
                             } else {
                                 self.options.phrase = self.searchphrase;
                             }
+                            dataRequest = {
+                                'type': 'raw',
+                                'option' : 'com_search',
+                                'view' : 'search',
+                                'searchphrase' : self.options.phrase,
+                                'ordering' : self.options.ordering,
+                                'limit' : self.options.limit,
+                                'searchword' : text/*.replace(/\"/g, '')*/,
+                                'tmpl': 'component',
+                                'r' : Date.now()
+                            }
+
+                            // window.winModRokajaxsearchDrive._Request(dataRequest);
+                            return  ;
                             var request = new Request({
                                 url: uri,
                                 method: 'get',
@@ -341,6 +218,7 @@ var RokAjaxSearch = new Class({
                                     input.addClass('loading');
                                 }.bind(this),
                                 onSuccess: function(returns, b, c) {
+
                                     var event = new CustomEvent('onKeyUpSuccess', { 'detail': returns });
                                     // Вызываем событие
                                     document.dispatchEvent(event);
@@ -348,8 +226,6 @@ var RokAjaxSearch = new Class({
                                     var results = new Element('div', {'styles': {'display': 'none'}}).set('html', returns);
 
                                     this.categorys = results.getElement("div[id=joomshopping_categorys_search]");
-
-
                                     var tmp = document.id('rokajaxsearch_tmp');
 
                                     var wrapper = results.getElement('.contentpaneopen');
@@ -412,7 +288,7 @@ var RokAjaxSearch = new Class({
                             } else {
                                 console.log( self )
                                 console.trace()
-                                self.timer = request.get.delay(500, request, [{
+                                self.timer = request.get.delay(500, request, [ {
                                     'type': 'raw',
                                     'option' : 'com_search',
                                     'view' : 'search',
@@ -422,7 +298,7 @@ var RokAjaxSearch = new Class({
                                     'searchword' : text/*.replace(/\"/g, '')*/,
                                     'tmpl': 'component',
                                     'r' : Date.now()
-                                }]);
+                                }   ]);
                             }
                         } else if (self.type !== 'local') {
                             self.timer = self.googleStart.delay(500, self);
@@ -431,153 +307,13 @@ var RokAjaxSearch = new Class({
 
                 }
 
-               /* setTimeout(function(e) {
 
-
-                    console.log( self.value   )
-
-
-
-
-
-                    var lnk = self.options.searchlink.split("?")[0];
-                    lnk = lnk.replace(self.options.uribase, '');
-                    lnk = (lnk) ? lnk : "index.php";
-
-                    var uri = self.options.uribase + lnk,
-                        b = self;
-
-                    if (self.options.wordpress) {
-                        uri = self.options.uribase + self.options.searchlink;
-                    }
-
-                    if (self.value === "") {
-                        var h = this.options.hidedivs.split(" ");
-                        this.results.empty()
-                            .removeClass("roksearch_results")
-                            .setStyle("visibility", "hidden");
-                        if (h.length > 0 && h !== "") {
-                            h.each(function(e) {
-                                document.id(e).setStyle("visibility", "visible");
-                            });
-                        }
-                    } else
-                        {
-                        if (self.type === "local") {
-
-                            console.log( self.value )
-                            console.log( this  )
-
-                            var c = this.value.split('"');
-                            if (c.length >= 3) {
-                                this.options.phrase = "exact";
-                            } else {
-                                this.options.phrase = this.searchphrase;
-                            }
-                            var d = new Request({
-                                url: uri ,
-                                method: "get",
-                                delay: 200,
-                                onRequest: function() {
-                                    b.addClass("loading");
-                                }.bind(self),
-                                onSuccess: function(r, s, p) {
-                                    var n = new Element("div", {
-                                        styles: {
-                                            display: "none"
-                                        }
-                                    }).set("html", r);
-                                    this.categorys = n.getElement("div[id=joomshopping_categorys_search]");
-                                    var o = document.id("rokajaxsearch_tmp");
-                                    var e = n.getElement(".contentpaneopen");
-                                    if (e) {
-                                        n.getChildren().each(function(t) {
-                                            if (t.get("class") == "contentpaneopen" && t.id != "page") {
-                                                o.set("html", t.innerHTML);
-                                            }
-                                        });
-                                    } else {
-                                        n.inject(document.body);
-                                        n.setStyles({
-                                            display: "block",
-                                            position: "absolute",
-                                            top: -10000
-                                        });
-                                        e = n.getElement("div.search-results") || n.getElement("div.search") || n.getElement("div[id=page]") || n.getElement("div.items");
-                                        if (!e) {
-                                            e = n.getElement("div.search");
-                                        }
-                                        n.dispose();
-                                        if (e) {
-                                            var m = e.getElement(".search-results") || e.getElement(".search") || e.getElement(".results") || e;
-                                            o.adopt(m);
-                                        }
-                                    }
-                                    this.results.empty()
-                                        .removeClass("roksearch_results")
-                                        .setStyle("visibility", "visible");
-                                    this.arrowleft = null;
-                                    this.arrowright = null;
-                                    this.selectedEl = -1;
-                                    this.els = [];
-                                    if (n.getElement(".contentpaneopen"))
-                                    {
-                                        this.outputTable();
-                                    }
-                                    else
-                                        {
-                                        this.outputTableless();
-                                    }
-                                    o.empty().setStyle("visibility", "visible");
-                                    b.removeClass("loading");
-                                    var q = b.getCoordinates(),
-                                        k = this;
-                                    k.results.setStyles({
-                                        top: q.top + q.height,
-                                        left: k.getLeft(b)
-                                    });
-                                    k.fx.start("opacity", 1);
-                                    k.fireEvent("loaded");
-                                }.bind(a)
-                            });
-                            if (self.options.wordpress) {
-                                this.timer = d.get.delay(500, d, [{
-                                    s: self.value.replace(/\"/g, ""),
-                                    task: "search",
-                                    action: "rokajaxsearch",
-                                    r: Date.now()
-                                }]);
-                            } else
-                                {
-                                self.timer = d.get.delay(500, d, [{
-                                    type: "raw",
-                                    option: "com_search",
-                                    view: "search",
-                                    // category_id: document.id("category_id").value,
-                                    searchphrase: this.options.phrase,
-                                    ordering: this.options.ordering,
-                                    limit: this.options.limit,
-                                    searchword: self.value.replace(/\"/g, ""),
-                                    tmpl: "component",
-                                    r: Date.now()
-                                }]);
-                            }
-                        } else {
-                            if (self.type !== "local") {
-                                self.timer = self.googleStart.delay(500, self);
-                            }
-                        }
-                    }
-                    return true;
-                }, 0);*/
             },
-
-            'keydown': function(e) {
+            keydown: function(e) {
                 clearTimeout(this.timer);
                 if (e.key === 'enter') e.stop();
             },
-
-            'keyup': function(e) {
+            keyup: function(e) {
 
                 if (e.code === 17 || e.code === 18 || e.code === 224 || e.alt || e.control || e.meta) return false;
                 if (e.alt || e.control  || e.meta || e.key === 'esc' || e.key === 'up' || e.key === 'down' || e.key === 'left' || e.key === 'right') return true;
@@ -587,6 +323,8 @@ var RokAjaxSearch = new Class({
                         location.href = self.els[self.selectedEl].getFirst('a');
                     return false;
                 }
+
+
 
                 clearTimeout(self.timer);
 
@@ -600,11 +338,6 @@ var RokAjaxSearch = new Class({
                 if (self.options.wordpress){
                     uri = self.options.uribase + self.options.searchlink;
                 }
-
-
-
-                console.log( this  )
-                console.log( this.value )
                 if (this.value === ''){
                     var splitDivs = self.options.hidedivs.split(" ");
                     self.results.empty().removeClass('roksearch_results').setStyle('visibility', 'hidden');
@@ -624,8 +357,6 @@ var RokAjaxSearch = new Class({
                         } else {
                             self.options.phrase = self.searchphrase;
                         }
-
-
                         var request = new Request({
                             url: uri,
                             method: 'get',
@@ -634,17 +365,13 @@ var RokAjaxSearch = new Class({
                                 input.addClass('loading');
                             }.bind(this),
                             onSuccess: function(returns, b, c) {
+                                // onSuccessFunction( returns, b, c )
                                 // Вызываем событие
                                 var event = new CustomEvent('onKeyUpSuccess', { 'detail': returns });
                                 document.dispatchEvent(event);
-
                                 var results = new Element('div', {'styles': {'display': 'none'}}).set('html', returns);
-
                                 this.categorys = results.getElement("div[id=joomshopping_categorys_search]");
-
-
                                 var tmp = document.id('rokajaxsearch_tmp');
-
                                 var wrapper = results.getElement('.contentpaneopen');
                                 if (wrapper) {
                                     results.getChildren().each(function(div) {
@@ -668,32 +395,31 @@ var RokAjaxSearch = new Class({
                                         tmp.adopt(rs);
                                     }
                                 }
-
-
                                 this.results.empty().removeClass('roksearch_results').setStyle('visibility', 'visible');
-
                                 this.arrowleft = null;
                                 this.arrowright = null;
                                 this.selectedEl = -1;
                                 this.els = [];
-
                                 if (results.getElement('.contentpaneopen'))	this.outputTable();
                                 else this.outputTableless();
-
                                 tmp.empty().setStyle('visibility','visible');
                                 input.removeClass('loading');
-
                                 var pos = input.getCoordinates(), selfz = this;
                                 selfz.results.setStyles({
                                     'top': pos.top + pos.height,
                                     'left': selfz.getLeft(input)
                                 });
-
                                 selfz.fx.start('opacity', 1);
                                 selfz.fireEvent('loaded');
-
-                            }.bind(self)
+                            }
+                            .bind(self)
                         });
+
+                        function onSuccessFunction( returns, b, c ){
+
+                        };
+
+
 
                         if (self.options.wordpress) {
                             self.timer = request.get.delay(1000, request, [{
@@ -741,7 +467,9 @@ var RokAjaxSearch = new Class({
                     var store = false;
                     if (e.key === 'left' && this.arrowleft) this.arrowleft.fireEvent('click');
                     else if (e.key === 'right' && this.arrowright) this.arrowright.fireEvent('click');
-                    else if (e.key === 'esc' && this.close) this.close.fireEvent('click', e);
+                    else if (e.key === 'esc' && this.close) {
+                        this.close.fireEvent('click', e);
+                    }
                     else if (e.key === 'down') {
                         store = this.selectedEl;
 
@@ -939,7 +667,9 @@ var RokAjaxSearch = new Class({
             header.set('html', this.options.results + poweredbygoogle);
         }
 
-        this.close = new Element('a', {'id': 'roksearch_link', 'class': 'png'}).set('href', '#').set('html', this.options.close).inject(header, 'before');
+        this.close = new Element('a', {'id': 'roksearch_link', 'class': 'png'})
+            .set('href', '#')
+            .set('html', this.options.close).inject(header, 'before');
         var splitDivs= this.options.hidedivs.split(" ");
 
         this.close.addEvent('click', function(e) {
@@ -953,15 +683,16 @@ var RokAjaxSearch = new Class({
             });
             //this.results.empty().removeClass('roksearch_results').setStyle('visibility', 'hidden');
 
-            if(splitDivs.length > 0 && splitDivs != '') splitDivs.each(function(div){
+            /*if(splitDivs.length > 0 && splitDivs != '') splitDivs.each(function(div){
                 document.id(div).setStyle('visibility', 'visible');
-            });
+            });*/
 
         }.bind(this));
+        /*console.log( typeof splitDivs )
 
         if(splitDivs.length > 0 && splitDivs != '') splitDivs.each(function(div){
             document.id(div).setStyle('visibility', 'hidden');
-        });
+        });*/
 
         this.results.addClass('roksearch_results');
 
@@ -972,7 +703,11 @@ var RokAjaxSearch = new Class({
         if (!searchedRestuls.length) searchedRestuls = document.getElements('#rokajaxsearch_tmp dl dt');
         if (!searchedRestuls.length) searchedRestuls = document.getElements('#rokajaxsearch_tmp .item');
 
+
+
+
         if (searchedRestuls.length > 0) {
+
             container = new Element('div', {'class': 'container-wrapper'}).inject(wrapper4);
             var scroller = new Element('div', {'class': 'container-scroller'}).inject(container);
 
@@ -987,6 +722,8 @@ var RokAjaxSearch = new Class({
                 var data = '';
                 data = res.getChildren();
 
+
+
                 if (data.length > 0) {
                     var suri = res.getElement('a').get('href');
                     var el = new Element('div', {'class': this.rows[i % 2] + ' png'});
@@ -995,6 +732,7 @@ var RokAjaxSearch = new Class({
                     var name = new Element('h3').set('html', (data[0].get('tag') == 'header' ? res.getElement('.title') : data[0]).get('text')).inject(lnk);
 
                     this.els.push(el);
+
                     el.addEvents({
                         'mouseenter': function() {
                             this.addClass(self.rows[i % 2] + '-hover');
@@ -1014,6 +752,9 @@ var RokAjaxSearch = new Class({
                     var desc = new Element('span').set('html', description).inject(lnk, 'after'),
                         br;
 
+
+                    console.log( this.options.showcategory ) ;
+                    // Показывать категорию для найденого товара
                     if(this.options.showcategory){
                         var dcat = res.getNext('.result-category') || res.getElement('p.meta') || data[1];
                         if (dcat){
@@ -1022,9 +763,14 @@ var RokAjaxSearch = new Class({
                         }
                     }
 
+
                     if(this.options.showreadmore){
-                        lnk = new Element('a', {'class': 'clr'}).set('href', suri).set('html', this.options.readmore).inject(desc, 'after');
-                        if (this.type != 'local') lnk.set('target', '_blank');
+                        lnk = new Element('a', {'class': 'clr'})
+                            .set('href', suri)
+                            .set('html', this.options.readmore)
+                            .inject(desc, 'after');
+
+                        if (this.type !== 'local') lnk.set('target', '_blank');
                         if(this.options.showdescription) br = new Element('br').inject(desc, 'after');
                     }
 
@@ -1227,5 +973,140 @@ var RokAjaxSearch = new Class({
                 this.scroller.toElement(this.page[this.current]);
             }
         }.bind(this));
-    }
+    } ,
+
+    googleStart: function() {
+        if (!this.inputBox.hasClass('loading')) this.inputBox.addClass('loading');
+        this.google.execute(this.inputBox.value);
+    },
+    googleComplete: function() {
+        var results = this.google.results;
+        var tmp = document.id('rokajaxsearch_tmp');
+//		console.log(results);
+        var ol = new Element('ol', {'class': 'list'}).inject(tmp);
+
+        if (this.type == 'web') {
+            results.each(function(res) {
+                var li = new Element('li');
+                var title_link = new Element('a', {'href': res.unescapedUrl}).set('target', '_blank').set('html', res.title);
+                var title = new Element('h4').inject(li).adopt(title_link);
+
+                var category = new Element('p').set('html', '<small><a href="'+res.url+'" target="_blank">'+res.visibleUrl+'</a></small>').inject(li);
+
+                var content = res.content;
+                content = content.replace('<b>', '<span class="highlight">').replace('</b>', '</span>');
+                var desc = new Element('div', {'class': 'description'}).set('html', content).inject(li);
+
+                li.inject(ol);
+            });
+        } else if (this.type == 'blog') {
+            results.each(function(res) {
+                var li = new Element('li');
+                var title_link = new Element('a', {'href': res.postUrl}).set('target', '_blank').set('html', res.title);
+                var title = new Element('h4').inject(li).adopt(title_link);
+
+                var category = new Element('p').set('html', '<small>by '+res.author+' - <a href="'+res.blogUrl+'" target="_blank">'+res.blogUrl+'</a></small>').inject(li);
+
+                var content = res.content;
+                content = content.replace('<b>', '<span class="highlight">').replace('</b>', '</span>');
+                var desc = new Element('div', {'class': 'description'}).set('html', content).inject(li);
+
+                li.inject(ol);
+            });
+        } else if (this.type == 'images') {
+            results.each(function(res) {
+                var li = new Element('li');
+                var title_link = new Element('a', {'href': res.url}).set('target', '_blank').set('html', res.title);
+                var title = new Element('h4').inject(li).adopt(title_link);
+
+                var category = new Element('p').set('html', '<small><a href="'+res.originalContextUrl+'" target="_blank">'+res.visibleUrl+'</a></small>').inject(li);
+
+                var content = res.content;
+                content = content.replace('<b>', '<span class="highlight">').replace('</b>', '</span>');
+                var desc = new Element('div', {'class': 'description'}).set('html', content).inject(li);
+
+                var thumb_container = new Element('div', {'class': 'google-thumb-image loading'}).inject(desc);
+                thumb_container.setStyles({
+                    'width': res.tbWidth.toInt(),
+                    'height': res.tbHeight.toInt()
+                });
+
+                var a = new Element('a', {'href': res.url, 'target': '_blank'}).inject(thumb_container);
+                var img = new Element('image', {
+                    width: res.tbWidth.toInt(),
+                    height: res.tbHeight.toInt(),
+                    src: res.tbUrl
+                }).inject(a);
+
+                li.inject(ol);
+            });
+        } else if (this.type == 'videos') {
+            results.each(function(res) {
+                var li = new Element('li');
+                var title_link = new Element('a', {'href': res.playUrl}).set('target', '_blank').set('html', res.title);
+                var title = new Element('h4').inject(li).adopt(title_link);
+
+                var seconds = res.duration.toInt();
+                var duration = '00:' + ((seconds < 10) ? '0' + seconds : seconds);
+
+                if (seconds >= 60) {
+                    var m = seconds / 60;
+                    var s = seconds - (m * 60);
+                    m = m.toInt(); s = s.toInt();
+                    if (m < 10) m = '0' + m;
+                    if (s < 10) s = '0' + s;
+                    duration = m + ':' + s;
+
+                    if (m >= 60) {
+                        var h = m / 60;
+                        h = h.toInt();
+                        if (h < 10) h = '0' + h;
+                        duration = h + duration;
+                    }
+                }
+
+                var category = new Element('p').set('html', '<span class="'+res.videoType.toLowerCase()+'">Rating: '+(parseFloat(res.rating)).toFixed(2)+' | Duration: '+duration+' <small>'+res.videoType+'</small></span>').inject(li);
+
+                var desc = new Element('div', {'class': 'description'}).set('html', '').inject(li);
+
+                var thumb_container = new Element('div', {'class': 'google-thumb-image loading'}).inject(desc);
+                thumb_container.setStyles({
+                    'width': res.tbWidth.toInt(),
+                    'height': res.tbHeight.toInt(),
+                    'text-align': 'center'
+                });
+
+                var a = new Element('a', {'href': res.url, 'target': '_blank'}).inject(thumb_container);
+                var img = new Element('image', {
+                    src: res.tbUrl,
+                    width: res.tbWidth.toInt(),
+                    height: res.tbHeight.toInt()
+                }).inject(a);
+
+                li.inject(ol);
+            });
+        }
+
+        this.results.empty().removeClass('roksearch_results').setStyle('visibility', 'visible');
+
+        this.arrowleft = null;
+        this.arrowright = null;
+        this.selectedEl = -1;
+        this.els = [];
+
+        this.outputTableless();
+
+        tmp.empty().setStyle('visibility','visible');
+        this.inputBox.removeClass('loading');
+
+
+        var pos = this.inputBox.getCoordinates(), self = this;
+        this.results.setStyles({
+            'top': pos.top + pos.height,
+            'left': self.getLeft()
+        });
+        this.fx.start('opacity', 1);
+        this.fireEvent('loaded');
+        //console.log(this.google.cursor);*/
+    },
 });

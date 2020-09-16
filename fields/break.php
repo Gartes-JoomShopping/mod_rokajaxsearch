@@ -22,11 +22,13 @@ class JFormFieldBreak extends JFormField
 {
 	/**
 	 * @var string
+     * @since 3.9
 	 */
 	protected $type = 'Break';
 
 	/**
 	 * @return string
+     * @since 3.9
 	 */
 	protected function getLabel()
 	{
@@ -51,6 +53,7 @@ class JFormFieldBreak extends JFormField
 
 	/**
 	 * @return mixed
+     * @since 3.9
 	 */
 	protected function getInput()
 	{

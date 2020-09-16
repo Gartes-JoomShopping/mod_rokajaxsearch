@@ -7,11 +7,9 @@
     <authorUrl>http://www.rockettheme.com</authorUrl>
     <copyright>(C) 2005 - 2014 RocketTheme, LLC. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
     <version_gnz11>0.4.5</version_gnz11>
-    <description>RokAjaxSearch is an ajaxian searcher that displays the results immediately and allows to choose the
-        proper one.
-    </description>
+    <description>MOD_ROKAJAXSEARCH_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
     <install> <!-- Runs on install -->
@@ -84,7 +82,7 @@
                 	default=""
                 	class="path_css_file "
                 	readonly=""
-                	required="1"
+                	required=""
                 	label="MOD_ROKAJAXSEARCH_PATH_CSS_FILE"
                 	description="MOD_ROKAJAXSEARCH_PATH_CSS_FILE_DESC"
                 	showon=""
@@ -100,17 +98,29 @@
                 <field default="index.php?option=com_search&amp;view=search"
                        description="Relative path to your advanced search page. &lt;br /&gt;Example: index.php?option=com_search&amp;view=search"
                        label="Advanced Search page URL." name="adv_search_page" type="text"/>
-                <field label="Style Options" type="break"/>
-                <field default="1" label="Include RokAjaxSearch default CSS" name="include_css" type="radio">
+
+
+
+<!--                Настройки стилей -->
+                <field label="STYLE_OPTIONS" type="break"/>
+
+<!-- Загружать стили модуля -->
+                <field name="include_css" default="1" label="INCLUDE_ROKAJAXSEARCH_DEFAULT_CSS"  type="radio">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field default="blue" label="Theme Style" name="theme" type="list">
+<!--                Тема стиля -->
+                <field default="blue" label="THEME_STYLE" name="theme" type="list">
                     <option value="blue">Blue</option>
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
                 </field>
-                <field label="Advanced Search" type="break"/>
+
+
+
+
+
+                <field label="ADVANCED_SEARCH" type="break"/>
                 <field default="any" label="Searchphrase" name="searchphrase" type="list">
                     <option value="any">Any words</option>
                     <option value="all">All words</option>
@@ -133,7 +143,7 @@
                     <option value="30">30</option>
                     <option value="50">50</option>
                 </field>
-                <field default="3" label="Results per page" name="perpage" type="list">
+                <field default="3" label="RESULTS_PER_PAGE" name="perpage" type="list">
                     <option value="3">3</option>
                     <option value="5">5</option>
                     <option value="10">10</option>
@@ -214,18 +224,61 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field default="1"
+
+                <field name="include_category"
+                       type="radio"
+                       default="1"
                        description="Set this option to yes, if you want category and section to show up under each title."
-                       label="Include (Category/Section)" name="include_category" type="radio">
+                       label="Include (Category/Section)" >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+
+
                 <field default="1"
                        description="Set this option to yes, if you want the read more link to show up under the description."
                        label="Show Read More link" name="show_readmore" type="radio">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+            </fieldset>
+            <fieldset  name="Optimization" addfieldpath="/libraries/GNZ11/Document/Form/Fields">
+                <field name="optimization_load_css"
+                	type="radio"
+                	default="1"
+                	label="OPTIMIZATION_LOAD_CSS"
+                	description="OPTIMIZATION_LOAD_CSS_DESC"
+                	class="btn-group btn-group-yesno"
+                	showon=""
+                	>
+                	<option value="1">JON</option>
+                	<option value="0">JOFF</option>
+                </field>
+                <field name="show_commetn_critical_css"
+                	type="radio"
+                	default="0"
+                	label="MOD_ROKAJAXSEARCH_SHOW_COMMETN_CRITICAL_CSS"
+                	description="MOD_ROKAJAXSEARCH_SHOW_COMMETN_CRITICAL_CSS_DESC"
+                	class="btn-group btn-group-yesno"
+                	showon="optimization_load_css:1"
+                	>
+                	<option value="1">JYES</option>
+                	<option value="0">JNO</option>
+                </field>
+                <!-- Для сжатия Css & Js файлов. Требует плагин  plg_system_pro_critical  -->
+                <field name="compres_critical_css"
+                	type="compresradio"
+                	default="0"
+                       file="modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.css"
+                	label="MOD_ROKAJAXSEARCH_COMPRES_CRITICAL_CSS"
+                	description="MOD_ROKAJAXSEARCH_COMPRES_CRITICAL_CSS_DESC"
+                	class="CompressScripts btn-group btn-group-yesno "
+                	showon="optimization_load_css:1"
+                	>
+                	<option value="1">JYES</option>
+                	<option value="0">JNO</option>
+                </field>
+
             </fieldset>
             <fieldset name="advanced">
                 <field description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"

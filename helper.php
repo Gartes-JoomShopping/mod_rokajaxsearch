@@ -13,21 +13,35 @@
  * Inspired on PixSearch Joomla! module by Henrik Hussfelt <henrik@pixpro.net>
  */
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
 defined('_JEXEC') or die('Restricted access');
 /**
  * @package RocketTheme
  * @subpackage rokajaxsearch
  */
 class modRokajaxsearchHelper {
-	
-	/**
-	 * modRokajaxsearchHelper constructor.
-	 * @since 3.9
-	 */
-	public function __construct ()
+    /**
+     * @var object параметры модуля
+     * @since 3.9
+     */
+    private $params;
+
+    /**
+     * modRokajaxsearchHelper constructor.
+     * @param bool|object $params
+     * @throws Exception
+     * @since 3.9
+     */
+	public function __construct ( $params = false )
 	{
-		$app = \Joomla\CMS\Factory::getApplication();
+	    $this->params = $params ;
+	    
+	    $app = Factory::getApplication();
 		$app->input->get('modRokajaxsearchHelper' , 0 , 'INT');
+
 		if( $app->input->get('modRokajaxsearchHelper' , 0 , 'INT') )
 		{
 			return ;
@@ -37,8 +51,8 @@ class modRokajaxsearchHelper {
 
         $this->getVersion();
 
-		$doc = \Joomla\CMS\Factory::getDocument();
-		$uri = \Joomla\CMS\Uri\Uri::getInstance( $uri = 'SERVER' );
+		$doc = Factory::getDocument();
+		$uri = Uri::getInstance( $uri = 'SERVER' );
 
 
 		$root = $uri->root($pathonly = false, $path = null);
@@ -49,98 +63,114 @@ class modRokajaxsearchHelper {
 		$app->input->set('modRokajaxsearchHelper' , 1 );
 		
 	}
-	
-	function inizialize( $css_style, $offset, &$params){
 
-        $doc = \Joomla\CMS\Factory::getDocument();
+    /**
+     *
+     * @param $css_style
+     * @param $offset
+     * @param $params object Настройки модуля
+     * @throws Exception
+     * @since 3.9
+     * @auhtor Gartes | sad.net79@gmail.com | Skype : agroparknew | Telegram : @gartes
+     * @date 28.08.2020 01:32
+     */
+	function inizialize($css_style, $offset, object &$params){
 
+
+        $doc = Factory::getDocument();
+        $helper = new modRokajaxsearchHelper( $params );
+
+
+
+        $iebrowser = $helper->getBrowser();
+
+
+        # Тема стиля
 	    $theme = $params->get('theme', 'blue');
+	    # Оптимизированная загрузка CSS
+        $optimization_load_css = $params->get( 'optimization_load_css' , 1 );
 
-        JHtml::_('behavior.framework', true);
+
+        $cssRootPath =   Uri::root().'modules/mod_rokajaxsearch/css/rokajaxsearch.css' ;
+        # Если Загружать стили модуля === НЕТ то подключить файл из шаблона
+        if( !$params->get('include_css', true ) )
+        {
+            $cssRootPath = Uri::root().'templates/' . Factory::getApplication()->getTemplate() . '/css/rokajaxsearch.css';
+        }#END IF
 
 
-		$doc->addScriptOptions('siteUrlsiteUrl'  , JURI::base(true) ) ;
 
-		$JSParams = [
-		    '__v' =>   MOD_ROKAJAXSEARCH_VERSION  ,
+
+
+        if( $css_style == 1 )
+        {
+            if( !$optimization_load_css )
+            {
+                $doc->addStyleSheet( $cssRootPath );
+                $doc->addStyleSheet( Uri::root() . "modules/mod_rokajaxsearch/themes/$theme/rokajaxsearch-theme.css");
+            }#END IF
+
+            # Подключаем критические стили
+            $criticalPathCss = Uri::root() . 'modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.css' ;
+            if ($params->get('compres_critical_css', true ))
+            {
+                $criticalPathCss = Uri::root() . 'modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.min.css' ;
+            }#END IF
+
+            $paramsLoadCss = [
+                # Показывать в стилях комментарий из какого файла взяты стили
+                'debug' => $optimization_load_css && $params->get('show_commetn_critical_css' , false),
+                # Загружать как файл CSS - Если отключена оптимизация
+                'asFile'=> ( !$optimization_load_css ? true : false ) ,
+            ] ;
+            \GNZ11\Document\Document::addIncludeStyleDeclaration( $criticalPathCss , $paramsLoadCss );
+
+
+            if( $iebrowser )
+            {
+                $style =   "/modules/mod_rokajaxsearch/themes/$theme/rokajaxsearch-theme-ie$iebrowser";
+                $check = dirname(__FILE__) . "/themes/$theme/rokajaxsearch-theme-ie$iebrowser";
+
+                if( file_exists($check . ".css") )
+                    $doc->addStyleSheet($style . ".css");
+                elseif( file_exists($check . ".php") )
+                    $doc->addStyleSheet($style . ".php");
+            }
+
+        }
+
+        /* RokAjaxSearch Init */
+		$paramsJs = [
+		    # Оптимизарованая загрузка CSS
+		    'optimization_load_css' => $optimization_load_css ,
+		    'RokajaxsearchDrive' =>  Uri::base(true).'/modules/mod_rokajaxsearch/assets/js/mod_rokajaxsearch.drive.js' ,
+            '__v' =>   MOD_ROKAJAXSEARCH_VERSION  ,
+            'siteUrlsiteUrl' =>   Uri::base(true)  ,
             'selectors' => [
                 'searchIcon' => '#rokajaxsearch-icon' ,
                 'input' => '#roksearch_search_str'  ,
-            ]
-        ];
-		$doc->addScriptOptions('mod_rokajaxsearch' , $JSParams ) ;
-
-
-        $helper = new modRokajaxsearchHelper();
-
-        $css = $helper->getCSSPath('rokajaxsearch.css', 'mod_rokajaxsearch');
-
-
-
-
-		$iebrowser = $helper->getBrowser();
-
-		if($css_style == 1 && $css != false) {
-			$doc->addStyleSheet($css);
-			$doc->addStyleSheet(JURI::root(true) ."/modules/mod_rokajaxsearch/themes/$theme/rokajaxsearch-theme.css");
-
-			if ($iebrowser) {
-				$style = JURI::root(true) ."/modules/mod_rokajaxsearch/themes/$theme/rokajaxsearch-theme-ie$iebrowser";
-				$check = dirname(__FILE__)."/themes/$theme/rokajaxsearch-theme-ie$iebrowser";
-
-				if (file_exists($check.".css")) $doc->addStyleSheet($style.".css");
-				elseif (file_exists($check.".php")) $doc->addStyleSheet($style.".php");
-			}
-
-		}
-
-
-
-
-
-
-
-
-
-//		$doc->addScript(JURI::root(true) ."/modules/mod_rokajaxsearch/js/rokajaxsearch.js?v_3.0.6");
-
-
-		
-		$Link = JURI::base(true).'/modules/mod_rokajaxsearch/assets/js/mod_rokajaxsearch.drive.js' ;
-		$this->_addScript( $Link );
-		$this->_addStyleDeclaration();
-		
-		
-		
-		
-		
-		/* RokAjaxSearch Init */
-		$websearch = ($params->get('websearch', 0)) ? 1 : 0;
-		$blogsearch = ($params->get('blogsearch', 0)) ? 1 : 0;
-		$imagesearch = ($params->get('imagesearch', 0)) ? 1 : 0;
-		$videosearch = ($params->get('videosearch', 0)) ? 1 : 0;
-
-		$paramsJs = [
-            'results'=>JText::_('RESULTS') ,
+            ],
+            'results'=> Text::_('RESULTS') ,
              'close' => '',
-             'websearch' => $websearch,
-             'blogsearch' => $blogsearch,
-             'imagesearch' => $imagesearch,
-             'videosearch' => $videosearch,
+             'websearch' => ($params->get('websearch', 0)) ? 1 : 0,
+             'blogsearch' => ($params->get('blogsearch', 0)) ? 1 : 0,
+             'imagesearch' => ($params->get('imagesearch', 0)) ? 1 : 0,
+             'videosearch' => ($params->get('videosearch', 0)) ? 1 : 0,
              'imagesize' => $params->get('image_size', 'MEDIUM'),
              'safesearch' => $params->get('safesearch', 'MODERATE'),
-             'search' => JText::_('SEARCH'),
-             'readmore' => JText::_('READMORE'),
-             'noresults' => JText::_('NORESULTS'),
-             'advsearch' => JText::_('ADVSEARCH'),
-             'page' => JText::_('PAGE'),
-             'page_of' => JText::_('PAGE_OF'),
+             'search' => Text::_('SEARCH'),
+             'readmore' => Text::_('READMORE'),
+             'noresults' => Text::_('NORESULTS'),
+             'advsearch' => Text::_('ADVSEARCH'),
+             'page' => Text::_('PAGE'),
+             'page_of' => Text::_('PAGE_OF'),
              'searchlink' => JRoute::_(JURI::Base() . htmlentities($params->get('search_page')), true),
              'advsearchlink' => JRoute::_(JURI::Base() . htmlentities($params->get('adv_search_page')), true),
              'uribase' => JRoute::_(JURI::Base(), true),
              'limit' => $params->get('limit', '10'),
              'perpage' => $params->get('perpage', '3'),
             'ordering' => $params->get('ordering', 'newest'),
+            // TODO Удалить после отключения rokajaxsearch.js
             'phrase' => $params->get('searchphrase', 'any'),
             'hidedivs' => $params->get('hide_divs', ''),
             'includelink' => $params->get('include_link', 1),
@@ -153,6 +183,10 @@ class modRokajaxsearchHelper {
             'showdescription' => $params->get('show_description', 1),
         ];
         $doc->addScriptOptions('mod_rokajaxsearch' , $paramsJs ) ;
+        $doc->addScriptOptions('siteUrlsiteUrl'  , Uri::base(true) ) ;
+
+        $HtmlDocument = new \Joomla\CMS\Document\HtmlDocument();
+        $doc->addCustomTag('<link rel="preload" as="script" href="'.$paramsJs['RokajaxsearchDrive'].'">');
 
 
 
@@ -163,34 +197,7 @@ class modRokajaxsearchHelper {
 		}
 	}
 
-    /**
-     *
-     * @param $cssfile
-     * @param $module
-     * @return false|string
-     * @throws Exception
-     * @since 3.9
-     * @auhtor Gartes | sad.net79@gmail.com | Skype : agroparknew | Telegram : @gartes
-     * @date 19.08.2020 02:44
-     *
-     */
-    public static function getCSSPath($cssfile, $module )
-    {
 
-        $tPath = 'templates/' . JFactory::getApplication()->getTemplate() . '/css/' . $cssfile . '-disabled';
-        $bPath = 'modules/' . $module . '/css/' . $cssfile;
-
-        // If the template is asking for it,
-        // don't include default rokajaxsearch css
-        if( !file_exists(JPATH_BASE . '/' . $tPath) )
-        {
-            return JURI::root(true) . '/' . $bPath;
-        }
-        else
-        {
-            return false;
-        }
-    }
 
 	public static function getBrowser()
 	{
@@ -211,111 +218,6 @@ class modRokajaxsearchHelper {
 
         return "";
     }
-
-    /*
-     * Добавить стили поля поиска в хедер !
-     */
-    private function  _addStyleDeclaration(){
-		$doc = JFactory::getDocument();
-		$doc->addStyleDeclaration('
-			#roksearch_search_str {
-    box-sizing: border-box;
-    border: 1px solid #ff7800;
-    height: 44px;
-    color: #000000;
-    margin: 0 auto;
-    padding: 0 55px 0 10px;
-    vertical-align: middle;
-    width: 100%;
-    background-color: #fff;
-}
-#roksearch_search_str::placeholder {
-    color: #aba8a8;
-}
-
-#rokajaxsearch-icon {
-    position: absolute;
-    top: 2px;
-    right: 1px;
-    /* width: 44px; */
-    cursor: pointer;
-}
-.search-form__icon {
-    position: relative;
-    display: none;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-    -ms-flex-negative: 0;
-    flex-shrink: 0;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: none;
-    background: #fff;
-}
-.search-form__icon svg {
-    fill: #ff7700;
-}
-.search-form__icon:hover svg {
-    fill: #df182b;
-}
-@media (min-width: 768px)
-{
-  .search-form__icon {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    }
-}
-
-.search-form__icon:before {
-    position: absolute;
-    left: -2px;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    height: 30px;
-    border-left: 2px solid #e9e9e9;
-    content: "";
-}
-button.search-form__microphone.speechRecognition{
-    position:absolute;
-    top: 2px;
-    right: 42px;
-}
-button.search-form__microphone.speechRecognition:before{
-
-border-left: 2px solid #e9e9e9;
-}
-button.search-form__microphone.speechRecognition svg {
-    fill: #0052b9;
-}
-button.search-form__microphone.speechRecognition:hover svg {
-    fill: #ff7878;
-}
-		');
-//	    echo'<pre>';print_r( $doc );echo'</pre>'.__FILE__.' '.__LINE__;
-//	    die(__FILE__ .' '. __LINE__ );
-		
-    }
-    
-    private function _addScript( $Link = null , $value = null , $async = 1  ){
-	   if( !$Link && !$value  ) return false ;  #END IF
-	    $dom = new \GNZ11\Document\Dom();
-	    $script = $dom->createElement ( 'script', $value  ) ;
-	    $dom::fetchAttr($dom ,$script , ['src'=>$Link , 'async'=>$async ] );
-	    $dom->appendChild($script);
-	    echo  $dom->saveHTML() ;
-	}
 
 	function getVersion(){
         if (!defined('MOD_ROKAJAXSEARCH_VERSION')){

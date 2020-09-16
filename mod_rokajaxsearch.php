@@ -18,6 +18,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
 
 
 /*echo'<pre>';print_r( $params );echo'</pre>'.__FILE__.' '.__LINE__;
@@ -45,7 +46,9 @@ $arrFiles = [
     ]
 ];
 \GNZ11\Extensions\ScriptFile::addFilesToUpdateExt( $pathFileJson , $arrFiles) ;*/
-
+/**
+ * @var $params object Настройки модуля
+ */
 $css_style = $params->get('include_css') ;
 $offset = $params->get('offset_search_result') ;
 $helper->inizialize( $css_style , $offset , $params);

@@ -54,16 +54,23 @@
  * @copyright Copyright (C) 2007 - 2014 RocketTheme, LLC
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 only
  */
-#roksearch_search_str::-webkit-input-placeholder { color:#000000; }
-#roksearch_search_str::-moz-placeholder { color:#000000; } /* firefox 19+ */
-#roksearch_search_str:-ms-input-placeholder { color:#000000; } /* ie */
-#roksearch_search_str:-moz-placeholder { color:#000000; }
 
-#roksearch_search_str {padding: 4px 0 4px 6px;font-size: 100%;margin: 0;border:0;}
-#roksearch_search_str.loading {background: transparent url(../images/spinner.gif) no-repeat scroll 98% 50%}
-#roksearch_search_str.loading + #rokajaxsearch-icon{
+
+
+
+body.search-loading #roksearch_search_str{
+	background: transparent url(../images/spinner.gif ) no-repeat;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	background-position: 98% 50%;
+}
+body.search-loading #rokajaxsearch-icon{
 	display:none;
 }
+
+/* #roksearch_search_str.loading {background: transparent url(../images/spinner.gif) no-repeat scroll 98% 50%} */
+/* #roksearch_search_str.loading + #rokajaxsearch-icon{ } */
+
 #roksearch_results {z-index: 10000;position: absolute;width: 598px;float: right;margin-top: -1px;text-align: left;visibility: hidden;}
 @media screen and (max-width: 1280px){#roksearch_results {z-index: 10000;position: absolute;width: 398px;float: right;margin-top: -1px;text-align: left;visibility: hidden;}}
 #roksearch_results a#roksearch_link {float: right;padding-right: 5px;margin-top: 4px;display: block;height: 16px;width: 16px;}
@@ -249,14 +256,17 @@ dd.result-category {width:100%;}
 	outline: medium none;
     text-decoration: none;
 }
-.rokajaxsearch{
-	position: relative;
-}
+ 
 body.roksearch-active .rokajaxsearch .roksearch-wrapper {
     
 /* position: absolute; */
     
 /* z-index: 173; */
+}
+
+body.roksearch-active .roksearch-wrapper {
+    box-shadow: 10px 10px 10px 10px;
+    box-shadow: 4px 5px 15px 0px rgb(0 0 0 / 27%);
 }
 body.roksearch-active #roksearch_search_str{
 	
@@ -266,20 +276,13 @@ body.roksearch-active #roksearch_search_str{
 }
   
 #roksearch_overlay{
-	
-position: fixed;
-	
-top: 0;
-	
-width: 100%;
-	
-height: 100%;
-	
-background: #000;
-	
-opacity: .5;
-	
-z-index: 10;
+	position: fixed;
+	top: 0;
+	width: calc(100% + 15px);
+	height: 100%;
+	background: #f5f5f5;
+	opacity: 0.9;
+	z-index: 10;
 }
 
 

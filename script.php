@@ -177,7 +177,7 @@ class mod_rokajaxsearchInstallerScript
         }
         if( !$mute )
         {
-            $mes = 'Версия версия библиотеки GNZ11 ('.$this->VersionGnz11.') <b>В актуальном состояни</b></b>';
+            $mes = 'Версия библиотеки GNZ11 ('.$this->VersionGnz11.') <b>В актуальном состояни</b></b>';
             $this->app->enqueueMessage( $mes   ) ;
         }
 
