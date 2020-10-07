@@ -1,3 +1,4 @@
+
 /**
  *
  * @type {window}
@@ -20,6 +21,8 @@ window.modRokajaxsearchDrive = function () {
      */
     var $$d = document ;
     const self = this;
+
+
     this.__module = 'mod_rokajaxsearch';
     /**
      * Имя модуля
@@ -39,6 +42,28 @@ window.modRokajaxsearchDrive = function () {
      * @private
      */
     this.__plugin = 'joomshopping_two_lang';
+
+    /**
+     * ********************************************************************************
+     */
+
+    /**
+     * Хранение предедущего ввода с клавиатуры
+     * @type {undefined}
+     */
+    this.prev_q = undefined;
+    /**
+     * таймаут между кнопками ввода
+     * @type {number}
+     */
+    this.search_timeout = 300;
+
+
+    /**
+     * ********************************************************************************
+     */
+
+
     /**
      * Локальный объект для хранения истории
      * @type {Object}
@@ -132,7 +157,6 @@ window.modRokajaxsearchDrive = function () {
         }),
 
     }
-
     /**
      * Домен сайта
      * @type {string}
@@ -196,8 +220,6 @@ window.modRokajaxsearchDrive = function () {
 
         self.loadAssets();
     };
-
-
     /**
      * Очистить поле INPUT
      */
@@ -255,8 +277,6 @@ window.modRokajaxsearchDrive = function () {
             $(self.selectors.searchSuggest).show();
         }
     }
-
-
     /**
      * Время Date.now() Последнего нажатия кнопки в INPUT
      * @type {number}
@@ -337,9 +357,6 @@ window.modRokajaxsearchDrive = function () {
                 },2000)
             },
         })
-
-
-
         /**
          * События поля Input
          */
@@ -372,129 +389,9 @@ window.modRokajaxsearchDrive = function () {
              * @returns {boolean}
              */
             keyup: function (event) {
-
-                if ( event.key === 'up' || event.key === 'down' ){
-                    // Блок с рейльтатами поиска
-                    var $searchSuggest = $('.search-suggest')
-                    var $suggestList =  $searchSuggest.find('ul.suggest-list');
-                    var $itemLi = $suggestList.find('li.search-suggest__item');
-                    var $itemLiActive = $suggestList.find('.search-suggest__item_state_active')
+                self.handleOnKeyUp(event)
 
 
-                    // Если нет отмеченных элементов
-                    if (!$itemLiActive[0]) {
-                        if ( event.key === 'up' ) {
-                            return ;
-                        }
-                        // берем первый список и отмечаем первый элемент
-                        $itemLi.first().addClass('search-suggest__item_state_active');
-                        $itemLi.first().parent().addClass('state_active');
-                    }else{
-
-                        var $next = $itemLiActive.next();
-                        var $prev = $itemLiActive.prev();
-                        var $parentUl = $itemLiActive.closest('ul')
-
-
-                        if ( event.key === 'down' ){
-                            // Если слудуюший элемент не существует
-                            if (!$next[0]){
-
-                                // Родитель UL Отмеченного элемента
-                                var $parent = $itemLiActive.parent('ul')
-
-                                // следующий родитель
-                                var $parentNext = $parent.next();
-
-                                if (!$parentNext[0]) {
-
-                                    // переход из группы перейти в категорию и поиск в категории
-                                    if ($parent.hasClass('search-suggest__group')){
-                                        // следующая грппа
-                                        var $nextGroup = $parent.closest('li').next();
-
-                                        if($nextGroup[0]){
-                                            $itemLiActive.removeClass('search-suggest__item_state_active');
-                                            $nextGroup.find('li').first().addClass('search-suggest__item_state_active')
-                                        }
-                                    }
-                                    return true ;
-                                }
-                                $parent.removeClass('state_active');
-                                $itemLiActive.removeClass('search-suggest__item_state_active');
-                                $parentNext.addClass('state_active')
-                                    .find('.search-suggest__item').first().addClass('search-suggest__item_state_active')
-                            }else{
-                                $itemLiActive.removeClass('search-suggest__item_state_active');
-                                $next.addClass('search-suggest__item_state_active')
-                            }
-                        }else if(event.key === 'up'){
-                            // если существует предедущий елемент LI
-                            if ($prev[0]){
-                                $parentUl.find('li').removeClass('search-suggest__item_state_active');
-                                $prev.addClass('search-suggest__item_state_active')
-                            }else if(!$prev[0]){
-                                console.log('$parentUl > ',$parentUl)
-                                console.log('$prev > ' , $prev)
-                            }
-
-                        }
-
-                        console.log( $parentUl )
-
-                        /**
-                         * Если это список товаров то будем скролить от нажатых стрелок
-                         */
-                        var DELTA
-                        if ($parentUl.hasClass('search-suggest-product') && event.key === 'down' ){
-                            console.log( $parentUl )
-                            console.log( $itemLiActive )
-                            $parentUl.scrollTop(0);
-                            DELTA = $itemLiActive.offset().top - $parentUl.height() + $itemLiActive.height() ;
-                            $parentUl.scrollTop(DELTA);
-                        }else if($parentUl.hasClass('search-suggest-product') && event.key === 'up'){
-                            /*$parentUl.scrollTop(0);
-                            DELTA = $itemLiActive.offset().top - $parentUl.height() ;
-                            $parentUl.scrollTop(DELTA);*/
-                        }
-
-
-
-                    }
-
-                }
-                if (event.code === 17 || event.code === 18 || event.code === 224 || event.alt || event.control || event.meta) return false;
-                if (event.alt || event.control || event.meta || event.key === 'esc' || event.key === 'up' || event.key === 'down' || event.key === 'left' || event.key === 'right') return true;
-                if (event.key === 'enter') event.stop();
-
-                var now = Date.now() ;
-                if ( now - self.overTimeStamp < 800  ) return false  ;
-
-                // запоминаем время последнего нажатия кнопок
-                self.overTimeStamp = now
-
-
-
-
-                var f = $$d.querySelector(self.selectors.form);
-                // self.checkValue();
-
-                if (this.value === '') {
-                    f.classList.add("empty-form");
-                    // self.checkValue();
-                    self.searchSuggest.Hide(true);
-
-                    // Todo отображать историю поиска
-                    return false;
-                }else{
-                    f.classList.remove("empty-form");
-                }
-                self.prepareSendFrase(event) ;
-                /*if (this.value.length > 4){
-                    self._Request(event);
-                }else{
-                    self._Request({target: {value: self.Input.value}}, 'SearchInDictionary')
-                }*/
             },
             /**
              * Клик по INPUT поиска
@@ -510,17 +407,7 @@ window.modRokajaxsearchDrive = function () {
                 // Скролл в верх найденных товаров к первому елементу
                 $listProduct = $('ul.search-suggest-product');
                 $listProduct.scrollTop(0);
-                console.log($listProduct)
-                /*$listProductFirstElement =  $listProduct.find('li.search-suggest__item');
-                var topListProduct = $listProduct.offset().top;
-                var topFirstElement = $listProductFirstElement.offset().top;
-                // если список найденных товаров не в самом верху
-                // то скролим список до первого довара
-                if (topListProduct !== topFirstElement ){
-                    $listProduct.animate({
-                        scrollTop:$listProductFirstElement.offset().top
-                    },500);
-                }*/
+
 
 
                 self.checkValue();
@@ -532,17 +419,144 @@ window.modRokajaxsearchDrive = function () {
 
             }
         });
-
-
-
         /**
          * Получение фокуса поле Поиска
          */
         // self.Input.onfocus = function () { };
-
         // После init - вызываем событие фокус на поле Input поиска
         self.Input.dispatchEvent( new Event('focus') )
+    };
+    this.search = function (event){
+        if ( event.key === 'up' || event.key === 'down' ){
+            // Блок с рейльтатами поиска
+            var $searchSuggest = $('.search-suggest')
+            var $suggestList =  $searchSuggest.find('ul.suggest-list');
+            var $itemLi = $suggestList.find('li.search-suggest__item');
+            var $itemLiActive = $suggestList.find('.search-suggest__item_state_active')
+
+
+            // Если нет отмеченных элементов
+            if (!$itemLiActive[0]) {
+                if ( event.key === 'up' ) {
+                    return ;
+                }
+                // берем первый список и отмечаем первый элемент
+                $itemLi.first().addClass('search-suggest__item_state_active');
+                $itemLi.first().parent().addClass('state_active');
+            }else{
+
+                var $next = $itemLiActive.next();
+                var $prev = $itemLiActive.prev();
+                var $parentUl = $itemLiActive.closest('ul')
+
+
+                if ( event.key === 'down' ){
+                    // Если слудуюший элемент не существует
+                    if (!$next[0]){
+
+                        // Родитель UL Отмеченного элемента
+                        var $parent = $itemLiActive.parent('ul')
+
+                        // следующий родитель
+                        var $parentNext = $parent.next();
+
+                        if (!$parentNext[0]) {
+
+                            // переход из группы перейти в категорию и поиск в категории
+                            if ($parent.hasClass('search-suggest__group')){
+                                // следующая грппа
+                                var $nextGroup = $parent.closest('li').next();
+
+                                if($nextGroup[0]){
+                                    $itemLiActive.removeClass('search-suggest__item_state_active');
+                                    $nextGroup.find('li').first().addClass('search-suggest__item_state_active')
+                                }
+                            }
+                            return true ;
+                        }
+                        $parent.removeClass('state_active');
+                        $itemLiActive.removeClass('search-suggest__item_state_active');
+                        $parentNext.addClass('state_active')
+                            .find('.search-suggest__item').first().addClass('search-suggest__item_state_active')
+                    }else{
+                        $itemLiActive.removeClass('search-suggest__item_state_active');
+                        $next.addClass('search-suggest__item_state_active')
+                    }
+                }else if(event.key === 'up'){
+                    // если существует предедущий елемент LI
+                    if ($prev[0]){
+                        $parentUl.find('li').removeClass('search-suggest__item_state_active');
+                        $prev.addClass('search-suggest__item_state_active')
+                    }else if(!$prev[0]){
+                        console.log('$parentUl > ',$parentUl)
+                        console.log('$prev > ' , $prev)
+                    }
+
+                }
+
+                console.log( $parentUl )
+
+                /**
+                 * Если это список товаров то будем скролить от нажатых стрелок
+                 */
+                var DELTA
+                if ($parentUl.hasClass('search-suggest-product') && event.key === 'down' ){
+                    console.log( $parentUl )
+                    console.log( $itemLiActive )
+                    $parentUl.scrollTop(0);
+                    DELTA = $itemLiActive.offset().top - $parentUl.height() + $itemLiActive.height() ;
+                    $parentUl.scrollTop(DELTA);
+                }else if($parentUl.hasClass('search-suggest-product') && event.key === 'up'){
+                    /*$parentUl.scrollTop(0);
+                    DELTA = $itemLiActive.offset().top - $parentUl.height() ;
+                    $parentUl.scrollTop(DELTA);*/
+                }
+
+
+
+            }
+
+        }
+        if (event.code === 17 || event.code === 18 || event.code === 224 || event.alt || event.control || event.meta) return false;
+        if (event.alt || event.control || event.meta || event.key === 'esc' || event.key === 'up' || event.key === 'down' || event.key === 'left' || event.key === 'right') return true;
+        if (event.key === 'enter') event.stop();
+
+        var now = Date.now() ;
+        // if ( now - self.overTimeStamp < 800  ) return false  ;
+
+        // запоминаем время последнего нажатия кнопок
+        self.overTimeStamp = now
+
+        var f = $$d.querySelector(self.selectors.form);
+        // self.checkValue();
+
+        if (this.value === '') {
+            f.classList.add("empty-form");
+            // self.checkValue();
+            self.searchSuggest.Hide(true);
+
+            // Todo отображать историю поиска
+            return false;
+        }else{
+            f.classList.remove("empty-form");
+        }
+        self.prepareSendFrase(event) ;
     }
+    /**
+     * Обработка кнопок клавиатуры
+     * @param event
+     */
+    this.handleOnKeyUp = function(event) {
+        var input = $(event.target);
+        if ( input.val().toLowerCase() !== this.prev_q) {
+            this.prev_q = input.val().toLowerCase();
+            clearTimeout(this.timeout);
+            var e = this;
+            this.timeout = setTimeout(function() {
+                e.search(event)
+            }, this.search_timeout );
+        }
+    };
     /**
      * Смотрим что в поле если больше 4 символов поиск по товарам
      * если меньше - поиск по словарю
@@ -557,7 +571,6 @@ window.modRokajaxsearchDrive = function () {
             self._Request({target: {value: self.Input.value}}, 'SearchInDictionary')
         }
     }
-
     /**
      * Объект Истории Поиска !
      * @type {{GetTemplateHistory: (function(): (undefined)), CleanAllHistory: Window.__History.CleanAllHistory, DeleteItem: Window.__History.DeleteItem, AddToHistory: Window.__History.AddToHistory, ShowHistory: (function(*=): (undefined)), Innit: Window.__History.Innit}}
@@ -672,7 +685,6 @@ window.modRokajaxsearchDrive = function () {
         },
 
     }
-
     /**
      * Колбэк - загрузки html шаблона истории
      * @param r
@@ -690,9 +702,6 @@ window.modRokajaxsearchDrive = function () {
         self.__History.ShowHistory(r.data.History.html)
 
     }
-
-
-
     /**
      * Данные системных комманд
      * @type {{countingAllProducts: number, offset: number}}
@@ -791,18 +800,18 @@ window.modRokajaxsearchDrive = function () {
         }
         console.log(r)
     }
-
     /**
      * Todo сделать правильную загрузку ресурсов в css
      * @type {}
      */
     this.loadAssets = function () {
         var opt = Joomla.getOptions('mod_rokajaxsearch',{});
+
         Promise.all([
 
-            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/css/rokajaxsearch.css') ,
-            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/themes/blue/rokajaxsearch-theme.css') ,
-            self.load.css(opt.uribase+'plugins/search/joomshopping_two_lang/assets/css/products.css') ,
+            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/css/rokajaxsearch.css?i='+opt.__v) ,
+            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/themes/blue/rokajaxsearch-theme.css?i='+opt.__v) ,
+            self.load.css(opt.uribase+'plugins/search/joomshopping_two_lang/assets/css/products.css?i='+opt.__v) ,
 
         ]).then(function () {
             self.__AssetsIsLoaded = true ;
@@ -829,12 +838,6 @@ window.modRokajaxsearchDrive = function () {
      */
     this.RecognitionInit = function () {
         self.speechRecognitionInit()
-        /* var siteUrl = Joomla.getOptions('siteUrlsiteUrl' , '' ) ;
-
-         var urlLib = siteUrl+'/libraries/GNZ11/assets/js/gnz11.js' ;
-         self._loadJsFile( urlLib ,  ) ;
- */
-
     };
     /**
      * Событие - начало распознования речи
@@ -1011,6 +1014,7 @@ window.modRokajaxsearchDrive = function () {
             Ajax.send(data).then(function (r) {
                 // Убрать индикаторов загрузки
                 $('body').removeClass(self.classes.bodyLoading);
+
                 if (!r.data){
                     if (r.message.length){
                         console.log( r.message )
@@ -1021,11 +1025,11 @@ window.modRokajaxsearchDrive = function () {
                 // Если есть данные ответа
                 if (Object.keys(r.data).length === 0 && r.data.constructor === Object) return  ;
 
-
                 if (data.method) {
                     self['Callback' + data.method](r);
                     return;
                 }
+
                 getSefLink(r.data);
                 self.renderProductResult(r.data.products.html)
 
@@ -1034,7 +1038,10 @@ window.modRokajaxsearchDrive = function () {
                 console.error(err) ;
             });
 
-            // Запросить SEF ссылки
+            /**
+             * Запросить SEF ссылки
+             * @param arrLink
+             */
             function getSefLink(arrLink) {
                 data.task = 'getSefLink';
                 data.arrSearchResult = JSON.stringify(arrLink);

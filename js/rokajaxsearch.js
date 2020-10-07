@@ -208,7 +208,7 @@ var RokAjaxSearch = new Class({
                                 'r' : Date.now()
                             }
 
-                            // window.winModRokajaxsearchDrive._Request(dataRequest);
+
                             return  ;
                             var request = new Request({
                                 url: uri,
@@ -316,7 +316,8 @@ var RokAjaxSearch = new Class({
             keyup: function(e) {
 
                 if (e.code === 17 || e.code === 18 || e.code === 224 || e.alt || e.control || e.meta) return false;
-                if (e.alt || e.control  || e.meta || e.key === 'esc' || e.key === 'up' || e.key === 'down' || e.key === 'left' || e.key === 'right') return true;
+                if (e.alt || e.control  || e.meta || e.key === 'esc' || e.key === 'up' || e.key === 'down' || e.key === 'left' || e.key === 'right')
+                    return true;
                 if (e.key === 'enter') e.stop();
                 if (e.key === 'enter' && self.selectedEl !== -1) {
                     if (self.selectedEl || self.selectedEl === 0)

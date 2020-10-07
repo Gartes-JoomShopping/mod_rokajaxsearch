@@ -136,7 +136,6 @@ class modRokajaxsearchHelper {
                 elseif( file_exists($check . ".php") )
                     $doc->addStyleSheet($style . ".php");
             }
-
         }
 
         /* RokAjaxSearch Init */
@@ -186,7 +185,7 @@ class modRokajaxsearchHelper {
         $doc->addScriptOptions('siteUrlsiteUrl'  , Uri::base(true) ) ;
 
         $HtmlDocument = new \Joomla\CMS\Document\HtmlDocument();
-        $doc->addCustomTag('<link rel="preload" as="script" href="'.$paramsJs['RokajaxsearchDrive'].'">');
+        $doc->addCustomTag('<link rel="preload" as="script" href="'.$paramsJs['RokajaxsearchDrive'].'?i='.MOD_ROKAJAXSEARCH_VERSION.'">');
 
 
 

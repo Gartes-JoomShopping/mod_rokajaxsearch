@@ -156,10 +156,13 @@ $formAction = \GNZ11\Joomla\Uri\Uri::createLink( ['option'=>'com_search' ,  'vie
 <script>
     function LoadModRokajaxsearchDrive(){
         var params = Joomla.getOptions('mod_rokajaxsearch') ;
+        var v = params.__v ;
+
+
         var I = setInterval(function () {
             if ( typeof wgnz11 === 'object') {
                 clearInterval(I)
-                wgnz11.load.js( params.RokajaxsearchDrive )
+                wgnz11.load.js( params.RokajaxsearchDrive +'?i='+v )
             }
         },100 );
     }
