@@ -29,7 +29,9 @@ window.modRokajaxsearchDrive = function () {
      * @type {string}
      * @private
      */
-    this.__param = Joomla.getOptions(this.__module, {});
+    this.__param = Joomla.getOptions(this.__module, {
+        minLengthWordSearchInDic : 2 ,
+    });
     /**
      * группа плагина
      * @type {string}
@@ -565,7 +567,7 @@ window.modRokajaxsearchDrive = function () {
     this.prepareSendFrase = function (event){
         if(self.Input.value.length === 0 ) return ;
          
-        if (self.Input.value.length > 4){
+        if (self.Input.value.length > self.__param.minLengthWordSearchInDic){
             self._Request(event);
         }else{
             self._Request({target: {value: self.Input.value}}, 'SearchInDictionary')

@@ -219,5 +219,5 @@ button.search-form__microphone.speechRecognition {
     position: absolute;
     top: 2px;
     right: 83px;
-    z-index: 10000;
+    z-index: 290;
 }

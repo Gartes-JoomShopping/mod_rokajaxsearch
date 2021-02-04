@@ -256,33 +256,18 @@ dd.result-category {width:100%;}
 	outline: medium none;
     text-decoration: none;
 }
- 
-body.roksearch-active .rokajaxsearch .roksearch-wrapper {
-    
-/* position: absolute; */
-    
-/* z-index: 173; */
-}
-
 body.roksearch-active .roksearch-wrapper {
     box-shadow: 10px 10px 10px 10px;
     box-shadow: 4px 5px 15px 0px rgb(0 0 0 / 27%);
 }
-body.roksearch-active #roksearch_search_str{
-	
-/* position: absolute; */
-	
-/* z-index: 10000000; */
-}
-  
 #roksearch_overlay{
-	position: fixed;
-	top: 0;
-	width: calc(100% + 15px);
-	height: 100%;
-	background: #f5f5f5;
-	opacity: 0.9;
-	z-index: 10;
+    position: fixed;
+	top: 0;
+	width: calc(100% + 15px);
+	height: 100%;
+	background: #f5f5f5;
+	opacity: 0.9;
+	z-index: 10;
 }
 
 

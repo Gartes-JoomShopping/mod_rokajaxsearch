@@ -77,6 +77,11 @@ class modRokajaxsearchHelper {
 	function inizialize($css_style, $offset, object &$params){
 
 
+
+
+
+
+
         $doc = Factory::getDocument();
         $helper = new modRokajaxsearchHelper( $params );
 
@@ -91,7 +96,7 @@ class modRokajaxsearchHelper {
         $optimization_load_css = $params->get( 'optimization_load_css' , 1 );
 
 
-        $cssRootPath =   Uri::root().'modules/mod_rokajaxsearch/css/rokajaxsearch.css' ;
+        $cssRootPath =   Uri::root().'modules/mod_rokajaxsearch/css/rokajaxsearch.css' . MOD_ROKAJAXSEARCH_VERSION;
         # Если Загружать стили модуля === НЕТ то подключить файл из шаблона
         if( !$params->get('include_css', true ) )
         {
@@ -107,24 +112,24 @@ class modRokajaxsearchHelper {
             if( !$optimization_load_css )
             {
                 $doc->addStyleSheet( $cssRootPath );
-                $doc->addStyleSheet( Uri::root() . "modules/mod_rokajaxsearch/themes/$theme/rokajaxsearch-theme.css");
+                $doc->addStyleSheet( Uri::root() . "modules/mod_rokajaxsearch/themes/$theme/rokajaxsearch-theme.css" . MOD_ROKAJAXSEARCH_VERSION);
             }#END IF
 
             # Подключаем критические стили
-            $criticalPathCss = Uri::root() . 'modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.css' ;
+            $criticalPathCss = Uri::root() . 'modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.css' . MOD_ROKAJAXSEARCH_VERSION ;
             if ($params->get('compres_critical_css', true ))
             {
-                $criticalPathCss = Uri::root() . 'modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.min.css' ;
+                $criticalPathCss = Uri::root() . 'modules/mod_rokajaxsearch/assets/css/rokajaxsearch-critical.min.css' . MOD_ROKAJAXSEARCH_VERSION;
             }#END IF
 
-            $paramsLoadCss = [
-                # Показывать в стилях комментарий из какого файла взяты стили
-                'debug' => $optimization_load_css && $params->get('show_commetn_critical_css' , false),
-                # Загружать как файл CSS - Если отключена оптимизация
-                'asFile'=> ( !$optimization_load_css ? true : false ) ,
-            ] ;
-            \GNZ11\Document\Document::addIncludeStyleDeclaration( $criticalPathCss , $paramsLoadCss );
-
+//            $paramsLoadCss = [
+//                # Показывать в стилях комментарий из какого файла взяты стили
+//                'debug' => $optimization_load_css && $params->get('show_commetn_critical_css' , false),
+//                # Загружать как файл CSS - Если отключена оптимизация
+//                'asFile'=> ( !$optimization_load_css ? true : false ) ,
+//            ] ;
+//            \GNZ11\Document\Document::addIncludeStyleDeclaration( $criticalPathCss , $paramsLoadCss );
+            $doc->addStyleSheet( $criticalPathCss );
 
             if( $iebrowser )
             {
@@ -142,6 +147,9 @@ class modRokajaxsearchHelper {
 		$paramsJs = [
 		    # Оптимизарованая загрузка CSS
 		    'optimization_load_css' => $optimization_load_css ,
+            # Количество символов до которого поиск вести по словарю
+            'minLengthWordSearchInDic' => 2 ,
+
 		    'RokajaxsearchDrive' =>  Uri::base(true).'/modules/mod_rokajaxsearch/assets/js/mod_rokajaxsearch.drive.js' ,
             '__v' =>   MOD_ROKAJAXSEARCH_VERSION  ,
             'siteUrlsiteUrl' =>   Uri::base(true)  ,
@@ -185,7 +193,9 @@ class modRokajaxsearchHelper {
         $doc->addScriptOptions('siteUrlsiteUrl'  , Uri::base(true) ) ;
 
         $HtmlDocument = new \Joomla\CMS\Document\HtmlDocument();
-        $doc->addCustomTag('<link rel="preload" as="script" href="'.$paramsJs['RokajaxsearchDrive'].'?i='.MOD_ROKAJAXSEARCH_VERSION.'">');
+//        $doc->addCustomTag('<link rel="preload" as="script" href="'.$paramsJs['RokajaxsearchDrive'].'?i='.MOD_ROKAJAXSEARCH_VERSION.'">');
+
+
 
 
 

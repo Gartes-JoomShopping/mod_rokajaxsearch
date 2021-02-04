@@ -7,7 +7,7 @@
     <authorUrl>http://www.rockettheme.com</authorUrl>
     <copyright>(C) 2005 - 2014 RocketTheme, LLC. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-    <version>3.2.3</version>
+    <version>3.2.5</version>
     <version_gnz11>0.4.5</version_gnz11>
     <description>MOD_ROKAJAXSEARCH_DESCRIPTION</description>
 
@@ -52,7 +52,23 @@
                 	default="0.4.1"
                 	filter="raw" />
                 	
-                	
+                <fieldset addfieldpath="/libraries/GNZ11/Extensions/Fields" />
+                <field name="__v"
+                	type="version"
+                	path_xml="/modules/mod_rokajaxsearch/mod_rokajaxsearch.xml"
+                	class="__v"
+                	filter="raw" />
+                <field name="development_on"
+                	type="radio"
+                	default="0"
+                	label="Development mode"
+                	class="btn-group btn-group-yesno development_on"
+                	showon="" >
+                	<option value="1">JYES</option>
+                	<option value="0">JNO</option>
+                </field>
+                 	
+                
                 <!--  системное имя модуля             -->
                 <field name="_name"
                 	type="text"

@@ -12,17 +12,17 @@
  *
  * Inspired on PixSearch Joomla! module by Henrik Hussfelt <henrik@pixpro.net>
  */
-
-
-
-
 defined('_JEXEC') or die('Restricted access');
+
+/* @var $params Joomla\Registry\Registry Object */
+$__v = '?v='.$params->get('__v' , '1.1.9');
+if ( $params->get('development_on' ,  false ) ) $__v = null;  #END IF
+if (!defined('MOD_ROKAJAXSEARCH_VERSION')) define('MOD_ROKAJAXSEARCH_VERSION', $__v );
 
 JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
 
 
-/*echo'<pre>';print_r( $params );echo'</pre>'.__FILE__.' '.__LINE__;
-die(__FILE__ .' '. __LINE__ );*/
+
 
 
 

@@ -14,7 +14,7 @@
  **********************************************************************************************************************/
 defined('_JEXEC') or die; // No direct access to this file
 ?>
-<button _ngcontent-c9="" class="search-form__clear" type="button" onclick="winModRokajaxsearchDrive.inputClean()"
+<button _ngcontent-c9="" style="z-index: 250"  class="search-form__clear" type="button" onclick="winModRokajaxsearchDrive.inputClean()"
         aria-label="Очистить поиск">
     <svg _ngcontent-c9="" height="16" width="16">
         <use _ngcontent-c9="" xlink:href="#icon-close-modal" xmlns:xlink="http://www.w3.org/1999/xlink"></use>
