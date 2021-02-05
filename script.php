@@ -15,7 +15,8 @@ defined('_JEXEC') or die;
  * Class mod_rokajaxsearchInstallerScript
  * @since 3.9
  */
-class mod_rokajaxsearchInstallerScript
+//class mod_rokajaxsearchInstallerScript
+class RokAjaxSearchInstallerScript
 {
     /**
      *
@@ -99,7 +100,7 @@ class mod_rokajaxsearchInstallerScript
      */
     function update($parent)
     {
-        echo '<p>Модуль обновлен до версии ' . $parent->get('manifest')->version . '.</p>';
+        echo '<p>Модуль "RokAjaxSearch" обновлен до версии ' . $parent->get('manifest')->version . '.</p>';
     }
 
     /**
