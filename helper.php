@@ -100,7 +100,7 @@ class modRokajaxsearchHelper {
         # Если Загружать стили модуля === НЕТ то подключить файл из шаблона
         if( !$params->get('include_css', true ) )
         {
-            $cssRootPath = Uri::root().'templates/' . Factory::getApplication()->getTemplate() . '/css/rokajaxsearch.css';
+            $cssRootPath = Uri::root().'templates/' . Factory::getApplication()->getTemplate() . '/css/rokajaxsearch.css'. MOD_ROKAJAXSEARCH_VERSION;
         }#END IF
 
 
@@ -142,6 +142,9 @@ class modRokajaxsearchHelper {
                     $doc->addStyleSheet($style . ".php");
             }
         }
+        
+        
+
 
         /* RokAjaxSearch Init */
 		$paramsJs = [
@@ -233,8 +236,13 @@ class modRokajaxsearchHelper {
             $xml_file = JPATH_ROOT . '/modules/mod_rokajaxsearch/mod_rokajaxsearch.xml';
             $dom = new DOMDocument("1.0", "utf-8");
             $dom->load($xml_file);
-            $version = $dom->getElementsByTagName('version')->item(0)->textContent;
+            $version = $dom->getElementsByTagName('__v')->item(0)->textContent;
             define('MOD_ROKAJAXSEARCH_VERSION', $version );
+
+            echo'<pre>';print_r( $version );echo'</pre>'.__FILE__.' '.__LINE__ . PHP_EOL;
+            die(__FILE__ .' '. __LINE__ );
+
+
         }
     }
 

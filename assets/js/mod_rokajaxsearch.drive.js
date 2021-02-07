@@ -15,7 +15,26 @@ window.modRokajaxsearchDrive = function () {
      * @type {jQuery}
      */
     var $b = $('body');
-    var $$b = document.querySelector('body');
+    // var $$b = document.querySelector('body');
+
+    /**
+     * Проверка для пассивного слушателя
+     * todo - Добавить в шаблон
+     * @type {boolean}
+     */
+    var passiveSupported = false;
+    try {
+        var options = Object.defineProperty({}, "passive", {
+            get: function () {
+                passiveSupported = !0
+            }
+        });
+        window.addEventListener("test", null, options)
+    }catch(e){}
+
+
+
+
     /**
      * @type {Document}
      */
@@ -58,7 +77,7 @@ window.modRokajaxsearchDrive = function () {
      * таймаут между кнопками ввода
      * @type {number}
      */
-    this.search_timeout = 300;
+    this.search_timeout = 500;
 
 
     /**
@@ -289,138 +308,152 @@ window.modRokajaxsearchDrive = function () {
      * Добавление обработчиков событий
      */
     this.addEvents = function () {
-        // Клик по <body />
-        $$b.addEvents({
-            click: function (event){
-                if (typeof $(event.target).closest(self.selectors.form)[0] === "undefined"){
-                    self.searchSuggest.Hide();
-                    // self.checkValue();
-                }
-            },
-        });
+
+        document.querySelector('body').addEventListener("click", function (event){
+            if (typeof $(event.target).closest(self.selectors.form)[0] === "undefined"){
+                self.searchSuggest.Hide();
+                // self.checkValue();
+            }
+        }, passiveSupported ? { passive: true } : false);
         /**
          * Событие для голосового сообщения о результатах поиска
          */
-        document.addEventListener('onKeyUpSuccess', self.parseResultCount, false);
+        document.addEventListener('onKeyUpSuccess', self.parseResultCount, passiveSupported ? { passive: true } : false);
+
+
+
         /**
-         * события Формы
+         * Клики на элементах Формы
          */
-        document.querySelector(self.selectors.form).addEvents({
-            click: function (event) {
-                self.checkValue();
-                var elLI, attrVal,
-                    input = document.querySelector(self.selectors.input)
+        document.querySelector(self.selectors.form).addEventListener("click", function (event) {
+            self.checkValue();
+            var elLI, attrVal,
+                input = document.querySelector(self.selectors.input)
 
-                // Если клик по кнопке удалить строку из истории
-                if ( event.target.closest("button.search-suggest__item-remove") ){
-                    event.preventDefault();
-                    self.__History.DeleteItem(event)
-                    return;
-                }
-                // Клик по кнопке очистить историю
-                if ( event.target.hasClass('search-suggest__heading-action') ){
-                    event.preventDefault();
-                    self.__History.CleanAllHistory(event)
-                    return;
-                }
-
-                // Получаем родительский <LI/> єллемент
-                elLI = event.target.closest("li.search-suggest__item[data-name]");
-
-                if ( !elLI || !elLI.hasAttribute('data-name')) return;
+            // Если клик по кнопке удалить строку из истории
+            if ( $(event.target).closest("button.search-suggest__item-remove") ){
+               // event.preventDefault();
+                self.__History.DeleteItem(event)
+                return;
+            }
+            // Клик по кнопке очистить историю
+            if ( $(event.target).hasClass('search-suggest__heading-action') ){
                 event.preventDefault();
+                self.__History.CleanAllHistory(event)
+                return;
+            }
 
-                attrVal = elLI.getAttribute('data-name');
-                if (!attrVal.length) return;
+            // Получаем родительский <LI/> єллемент
+            elLI = $(event.target).closest("li.search-suggest__item[data-name]");
+            
+            console.log('mod_rokajaxsearch.drive:elLI' , elLI );
+             
+            
+            if ( !elLI || !elLI.hasAttribute('data-name')) return;
+            event.preventDefault();
 
-                // Установить значение в поле поиска
-                input.value = attrVal
+            attrVal = elLI.getAttribute('data-name');
+            if (!attrVal.length) return;
 
-                // если клик по ссылки на товар
-                if (elLI.hasAttribute('redirect') ){
-                    self.toRedirect = elLI.querySelector('a').getAttribute('href');
+            // Установить значение в поле поиска
+            input.value = attrVal
 
-                    // Добавить слово в историю поиска
-                    self.__History.AddToHistory( self.Input.value );
-
-                    self.DB.Redirect = self.toRedirect ;
-                    self._Request({ target: {value: self.Input.value}}  , 'AddHitDictionary' );
-                    return  ;
-                }
+            // если клик по ссылки на товар
+            if (elLI.hasAttribute('redirect') ){
+                self.toRedirect = elLI.querySelector('a').getAttribute('href');
 
                 // Добавить слово в историю поиска
-                self.__History.AddToHistory(self.Input.value);
+                self.__History.AddToHistory( self.Input.value );
+
+                self.DB.Redirect = self.toRedirect ;
+                self._Request({ target: {value: self.Input.value}}  , 'AddHitDictionary' );
+                return  ;
+            }
+
+            // Добавить слово в историю поиска
+            self.__History.AddToHistory(self.Input.value);
 
 
-                // отправить запрос для поиска товаров
-                self._Request({target: {value: self.Input.value}});
-                setTimeout(function (){
-                    self._Request({target: {value: self.Input.value}}  , 'AddHitDictionary' );
-                },2000)
-            },
-        })
+            // отправить запрос для поиска товаров
+            self._Request({target: {value: self.Input.value}});
+            setTimeout(function (){
+                self._Request({target: {value: self.Input.value}}  , 'AddHitDictionary' );
+            },2000)
+        }, passiveSupported ? { passive: true } : false );
         /**
          * События поля Input
          */
-        self.Input.addEvents({
-            focus : function (event){
-                console.log('--== Input ==-- 1.Event onfocus');
-                self.overlayShow();
-
-
-
-                if (event.target.value === ''){
-                    console.log('Field EMPTY!')
-                    self.__History.ShowHistory();
-                }else{
-                    self.searchSuggest.Show();
-                }
-            },
-            /**
-             * @param event Объект события PASTE
-             */
-            paste: function (event) {
-                setTimeout(function () {
-                    self.checkValue();
-                    self._Request(event);
-                }, 0);
-            },
-            /**
-             * Нажатые кнопки в поле поиска
-             * @param event
-             * @returns {boolean}
-             */
-            keyup: function (event) {
-                self.handleOnKeyUp(event)
-
-
-            },
-            /**
-             * Клик по INPUT поиска
-             * @param event
-             */
-            click: function (event) {
-                // Сбрасываем выделенные строки подсказок
-                $searchSuggest = $('.search-suggest');
-                $searchSuggest.find('li.search-suggest__item_state_active').removeClass('search-suggest__item_state_active');
-                $searchSuggest.find('ul.state_active').removeClass('state_active');
-
-
-                // Скролл в верх найденных товаров к первому елементу
-                $listProduct = $('ul.search-suggest-product');
-                $listProduct.scrollTop(0);
-
-
-
-                self.checkValue();
-                if (!$(self.selectors.overlay)[0] || typeof $(self.selectors.overlay)[0] === 'undefined'){
-                    self.overlayShow();
-                }
-
-                self.prepareSendFrase(event)
-
+        self.Input.addEventListener("focus", function (event) {
+            console.log('--== Input ==-- 1.Event onfocus');
+            self.overlayShow();
+            if (event.target.value === ''){
+                console.log('Field EMPTY!')
+                self.__History.ShowHistory();
+            }else{
+                self.searchSuggest.Show();
             }
-        });
+        }, passiveSupported ? { passive: true } : false );
+        /**
+         * @param event Объект события PASTE
+         */
+        self.Input.addEventListener("paste", function (event) {
+            setTimeout(function () {
+                self.checkValue();
+                self._Request(event);
+            }, 0);
+        },passiveSupported ? { passive: true } : false);
+        /**
+         * Нажатые кнопки в поле поиска
+         * @param event
+         * @returns {boolean}
+         */
+        self.Input.addEventListener("keyup", function (event) {
+            self.handleOnKeyUp(event)
+        },passiveSupported ? { passive: true } : false);
+        /**
+         * Клик по INPUT поиска
+         * @param event
+         */
+        self.Input.addEventListener("click", function (event) {
+            // Сбрасываем выделенные строки подсказок
+            $searchSuggest = $('.search-suggest');
+            $searchSuggest.find('li.search-suggest__item_state_active').removeClass('search-suggest__item_state_active');
+            $searchSuggest.find('ul.state_active').removeClass('state_active');
+
+
+            // Scroll в верх найденных товаров к первому елементу
+            $listProduct = $('ul.search-suggest-product');
+            $listProduct.scrollTop(0);
+
+
+
+            self.checkValue();
+            if (!$(self.selectors.overlay)[0] || typeof $(self.selectors.overlay)[0] === 'undefined'){
+                self.overlayShow();
+            }
+
+            self.prepareSendFrase(event)
+        },passiveSupported ? { passive: true } : false);
+
+
+
+
+        /*document.querySelector(self.selectors.form).addEvents({
+            click: function (event) {
+
+            },
+        })*/
+
+
+        /*self.Input.addEvents({
+            focus : function (event){ },
+
+            paste: function (event) {  },
+
+            keyup: function (event) { },
+
+            click: function (event) {  }
+        });*/
         /**
          * Получение фокуса поле Поиска
          */
@@ -430,7 +463,7 @@ window.modRokajaxsearchDrive = function () {
     };
     this.search = function (event){
         if ( event.key === 'up' || event.key === 'down' ){
-            // Блок с рейльтатами поиска
+            // Блок с результатами поиска
             var $searchSuggest = $('.search-suggest')
             var $suggestList =  $searchSuggest.find('ul.suggest-list');
             var $itemLi = $suggestList.find('li.search-suggest__item');
@@ -560,7 +593,8 @@ window.modRokajaxsearchDrive = function () {
         }
     };
     /**
-     * Смотрим что в поле если больше 4 символов поиск по товарам
+     * Смотрим что в поле если больше self.__param.minLengthWordSearchInDic символов
+     * поиск по товарам
      * если меньше - поиск по словарю
      * @param event
      */
@@ -605,6 +639,7 @@ window.modRokajaxsearchDrive = function () {
          */
         ShowHistory  : function (html){
             // Если история пустая
+            if (!self._LocalStorage) return;
             if ( Object.keys(self._LocalStorage).length === 0 && self._LocalStorage.constructor === Object ) return ;
 
             // Если шаблон html Истории не передан и рессурсы CSS загружены
@@ -664,15 +699,28 @@ window.modRokajaxsearchDrive = function () {
         },
 
         DeleteItem : function (event){
-            event.preventDefault()
-            var historyBlock = event.target.closest('.search-suggest.history');
-            var li = event.target.closest('li[data-name]');
-            var attrName = li.getAttribute('data-name');
+            // event.preventDefault()
 
-            delete self._LocalStorage[attrName];
+            var historyBlock = $(event.target).closest('.search-suggest.history');
+            if (!historyBlock[0]) return ;
+            console.log('mod_rokajaxsearch.drive:DeleteItem' , historyBlock ); 
+
+            var li = $(event.target).closest('li[data-name]');
+            var attrName = li.attr('data-name');
+
+
+            console.log('mod_rokajaxsearch.drive:DeleteItem self._LocalStorage' , self._LocalStorage ); 
+
+            if ( self._LocalStorage && self._LocalStorage.length){
+                delete self._LocalStorage[attrName];
+            }
+
+
             Storage_class.set( self.StorageName , self._LocalStorage  );
+
             setTimeout(function (){
-                li.parentNode.removeChild(li);
+                li.remove();
+                // Если елемент только 1 удаляем список
                 if ( historyBlock.getElementsByTagName('li').length === 1 )
                     historyBlock.remove();
             },500)
@@ -680,7 +728,7 @@ window.modRokajaxsearchDrive = function () {
         },
         CleanAllHistory : function (event){
             Storage_class.unset(self.StorageName)
-            var historyBlock = event.target.closest('.search-suggest.history');
+            var historyBlock = $(event.target).closest('.search-suggest.history');
             setTimeout(function (){
                 historyBlock.remove();
             },500);
@@ -688,7 +736,7 @@ window.modRokajaxsearchDrive = function () {
 
     }
     /**
-     * Колбэк - загрузки html шаблона истории
+     * Callback - загрузки html шаблона истории
      * @param r
      * @constructor
      */
@@ -705,7 +753,7 @@ window.modRokajaxsearchDrive = function () {
 
     }
     /**
-     * Данные системных комманд
+     * Данные системных команд
      * @type {{countingAllProducts: number, offset: number}}
      */
     this.offset = 0 ;
@@ -718,12 +766,12 @@ window.modRokajaxsearchDrive = function () {
 
     }
     /**
-     * инит статистики - маркер
+     * Init статистики - маркер
      * @type {boolean}
      */
     this.StatisticInit = false ;
     /**
-     * Добавить элемены статистики на страницу
+     * Добавить элементы статистики на страницу
      * @constructor
      */
     this.StatisticAdd = function () {
@@ -736,7 +784,7 @@ window.modRokajaxsearchDrive = function () {
         $(self.selectors.wrapResult).append( $el );
     }
     /**
-     * Хранение станистики
+     * Хранение статистики
      * @type {{added: number, words: number, prcn: number}}
      */
     this.Statistic={
@@ -762,12 +810,12 @@ window.modRokajaxsearchDrive = function () {
         console.log( Data.statistic )
     }
     /**
-     * Добавить Hit к слову и обработка системных комманд
-     * @param r
+     * Добавить Hit к слову и обработка системных команд
+     * @param  r object
      * @constructor
      */
     this.CallbackAddHitDictionary = function (r){
-        // Если клие по ссылки на товар - переходим в товар
+        // Если клик по ссылки на товар - переходим в товар
         if ( self.toRedirect ) {
             window.location.href = self.toRedirect ;
         }
@@ -810,16 +858,12 @@ window.modRokajaxsearchDrive = function () {
         var opt = Joomla.getOptions('mod_rokajaxsearch',{});
 
         Promise.all([
-
-            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/css/rokajaxsearch.css?i='+opt.__v) ,
-            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/themes/blue/rokajaxsearch-theme.css?i='+opt.__v) ,
-            self.load.css(opt.uribase+'plugins/search/joomshopping_two_lang/assets/css/products.css?i='+opt.__v) ,
-
+            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/css/rokajaxsearch.css'+opt.__v) ,
+            self.load.css(opt.uribase+'modules/mod_rokajaxsearch/themes/blue/rokajaxsearch-theme.css'+opt.__v) ,
+            self.load.css(opt.uribase+'plugins/search/joomshopping_two_lang/assets/css/products.css'+opt.__v) ,
         ]).then(function () {
             self.__AssetsIsLoaded = true ;
             self.__History.GetTemplateHistory();
-
-
         }, function (err) {
             console.log(err)
         })
@@ -842,7 +886,7 @@ window.modRokajaxsearchDrive = function () {
         self.speechRecognitionInit()
     };
     /**
-     * Событие - начало распознования речи
+     * Событие - начало распознавания речи
      */
     this.onStartSpeechRecognition = function () {
         // Очитстить поле ввода при старте записи
@@ -851,7 +895,7 @@ window.modRokajaxsearchDrive = function () {
 
     };
     /**
-     * Событие - окончание распознования речи
+     * Событие - окончание распознавания речи
      */
     this.onEndSpeechRecognition = function () {
         $(self.__param.selectors.input).trigger('keydown')
@@ -1018,7 +1062,7 @@ window.modRokajaxsearchDrive = function () {
                 $('body').removeClass(self.classes.bodyLoading);
 
                 if (!r.data){
-                    if (r.message.length){
+                    if (r.message && r.message.length){
                         console.log( r.message )
                         console.log( data )
                     }
@@ -1109,7 +1153,7 @@ window.modRokajaxsearchDrive = function () {
         } ,
     }
     /**
-     * Усановить ссылки для товаров
+     * Установить ссылки для товаров
      * @param data
      */
     this.setLinkToProduct = function (data) {

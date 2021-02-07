@@ -73,7 +73,9 @@ $isSef = true ;
 //$params = array();
 //$params['option'] = 'com_search';
 //$params['view'] = 'search';
-$formAction = \GNZ11\Joomla\Uri\Uri::createLink( ['option'=>'com_search' ,  'view'=>'search'],  $isSef );
+
+    JLoader::registerNamespace( 'GNZ11' , JPATH_LIBRARIES . '/GNZ11' , $reset = false , $prepend = false , $type = 'psr4' );
+    $formAction = \GNZ11\Joomla\Uri\Uri::createLink( ['option'=>'com_search' ,  'view'=>'search'],  $isSef );
 ?>
 
 <form name="rokajaxsearch" id="rokajaxsearch" class="<?php echo $theme; ?>" action="<?=$formAction ?>"
@@ -162,7 +164,7 @@ $formAction = \GNZ11\Joomla\Uri\Uri::createLink( ['option'=>'com_search' ,  'vie
         var I = setInterval(function () {
             if ( typeof wgnz11 === 'object') {
                 clearInterval(I)
-                wgnz11.load.js( params.RokajaxsearchDrive +'?i='+v )
+                wgnz11.load.js( params.RokajaxsearchDrive  +v )
             }
         },100 );
     }
